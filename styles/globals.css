@@ -14,3 +14,23 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.box{
+  height: 600px;
+  width: 600px;
+
+
+  text-align: center;
+}
+
+table, td{
+  border: solid black 1px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+td{
+  width: 60px;
+  height: 60px;
+}
+

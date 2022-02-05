@@ -1,8 +1,66 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import { useState, useEffect } from 'react';
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
+
+
+  const numCells = 100;
+  const columnCount = 10;
+  const words = ["APPLE", "BANANA"];
+  const alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+  const [letters, setLetters] = useState([]);
+  const [rows, setRows] = useState({})
+
+  useEffect(() => {
+
+
+    setLetters(()=>{
+      
+      const bigArr = [];
+      let arr = [];
+      for(let i = 0; i < numCells; i++){
+
+        //arr.push(alphabet[Math.floor(Math.random() * alphabet.length)].toUpperCase())
+        arr.push("")
+        if(arr.length === columnCount) 
+        {
+        bigArr.push(arr);
+        arr = [];
+        }
+
+      }
+      return bigArr;
+    })
+  
+
+  }, []);
+
+
+  
+
+function findWordInsertLocation(){
+
+  const rowIndex = Math.floor(Math.random() * letters.length)
+  const row = letters[rowIndex]
+  const cellIndex = Math.floor(Math.random() * row.length)
+  return {
+    row: rowIndex,
+    cell: cellIndex
+  };
+}
+
+function handleClick(){
+  const {row, cell} = findWordInsertLocation();
+  setLetters((prev)=>{
+    return ([...prev.slice(0,row), [...prev[row].slice(0,cell), "A", ...prev[row].slice(cell+1)], ...prev.slice(row+1)])
+  })
+}
+
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,44 +70,28 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+
 
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+          <table className="box"> 
+          <tbody>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+          {letters.map((arr, index)=>{    
+          return <tr row={index} key={Math.random()}>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+          {arr.map((letter, index)=>{
+          return <td cell={index} key={Math.random()}>{letter}</td>
+           })}
+                </tr>
+          })}
 
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+          </tbody>
+          </table>
         </div>
+
+        <button onClick={handleClick}>Start</button>
+
       </main>
 
       <footer className={styles.footer}>
