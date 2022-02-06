@@ -41,7 +41,7 @@ export default function Home() {
 
   
   function getDirection(){
-    const directions = ["HORIZONTAL", "VERTICAL"];
+    const directions = ["HORIZONTAL_POS", "HORIZONTAL_NEG", "VERTICAL_POS", "VERTICAL_NEG", "DIAGONAL_UP_POS", "DIAGONAL_UP_NEG", "DIAGONAL_DOWN_POS", "DIAGONAL_DOWN_NEG"];
     const dir = directions[Math.floor(Math.random()*directions.length)];
     return dir
   }
@@ -63,19 +63,38 @@ function handleClick(){
   const dir = getDirection();
 
   switch(dir){
-    case "HORIZONTAL":
+    case "HORIZONTAL_POS":
         //Handle word placement if horizontal  
 
         if(!checkWordFits(wordToInsert, row, cell, dir)) return; //Check if the word can be contained in the grid.
         if(!validateCellPlacement(wordToInsert, row, cell, dir)) return; //Check if the word will replace any other letters in the grid.
 
         //Place letters
+        for(let i = 0; i < wordToInsert.length; i++){
         setLetters((prev)=>{
-          return ([...prev.slice(0,row), [...prev[row].slice(0,cell), ...wordToInsert, ...prev[row].slice(cell+wordToInsert.length)], ...prev.slice(row+1)])
+          console.log(wordToInsert[i])
+          return ([...prev.slice(0,row), [...prev[row].slice(0,cell+i), wordToInsert[i], ...prev[row].slice(cell+1+i)], ...prev.slice(row+1)])
         })
+      }
 
       break;
-    case "VERTICAL":
+    case "HORIZONTAL_NEG":
+        //Handle word placement if horizontal  
+
+        if(!checkWordFits(wordToInsert, row, cell, dir)) return; //Check if the word can be contained in the grid.
+        if(!validateCellPlacement(wordToInsert, row, cell, dir)) return; //Check if the word will replace any other letters in the grid.
+
+        //Place letters
+        for(let i = 0; i < wordToInsert.length; i++){
+        setLetters((prev)=>{
+          return ([...prev.slice(0,row), [...prev[row].slice(0,cell-i), wordToInsert[i], ...prev[row].slice(cell+1-i)], ...prev.slice(row+1)])
+        })
+      }
+
+      break;
+
+
+    case "VERTICAL_POS":
         //Handle word placement if vertical  
         if(!checkWordFits(wordToInsert, row, cell, dir)) return; //Check if the word can be contained in the grid.     
         if(!validateCellPlacement(wordToInsert, row, cell, dir)) return; //Check if the word will replace any other letters in the grid.
@@ -89,17 +108,88 @@ function handleClick(){
 
         })
         }
+      break;
+      case "VERTICAL_NEG":
+        //Handle word placement if vertical  
+        if(!checkWordFits(wordToInsert, row, cell, dir)) return; //Check if the word can be contained in the grid.     
+        if(!validateCellPlacement(wordToInsert, row, cell, dir)) return; //Check if the word will replace any other letters in the grid.
+
+        //Place letters vertically
+        //Slice each row and replace one cell for every letter.
+        for(let i = 0; i < wordToInsert.length; i++){
+          setLetters((prev)=>{
+       
+            return ([...prev.slice(0,row-i), [...prev[row-i].slice(0,cell), wordToInsert[i], ...prev[row-i].slice(cell+1)], ...prev.slice(row+1-i)])
+
+        })
+        }
+      break;
+    case "DIAGONAL_UP_NEG":
+        //Handle word placement if diagonal up left 
+
+        if(!checkWordFits(wordToInsert, row, cell, dir)) return; //Check if the word can be contained in the grid.     
+        if(!validateCellPlacement(wordToInsert, row, cell, dir)) return; //Check if the word will replace any other letters in the grid.
+
+        //Slice each row and replace one cell for every letter. Decrement row, decrement cell.
+        for(let i = 0; i < wordToInsert.length; i++){
+          setLetters((prev)=>{
+       
+            return ([...prev.slice(0,row-i), [...prev[row-i].slice(0,cell-i), wordToInsert[i], ...prev[row-i].slice(cell+1-i)], ...prev.slice(row+1-i)])
+
+        })
+        }
+
+      break;
+
+    case "DIAGONAL_UP_POS":
+        //Handle word placement if diagonal up right
+
+          if(!checkWordFits(wordToInsert, row, cell, dir)) return; //Check if the word can be contained in the grid.     
+          if(!validateCellPlacement(wordToInsert, row, cell, dir)) return; //Check if the word will replace any other letters in the grid.
+  
+          //Slice each row and replace one cell for every letter. Decrement row, increment cell.
+          for(let i = 0; i < wordToInsert.length; i++){
+            setLetters((prev)=>{
+         
+              return ([...prev.slice(0,row-i), [...prev[row-i].slice(0,cell+i), wordToInsert[i], ...prev[row-i].slice(cell+1+i)], ...prev.slice(row+1-i)])
+  
+          })
+          }
+  
+        break;
 
 
       break;
-    case "DIAGONAL_LEFT":
-        //Handle word placement if diagonal left 
+      case "DIAGONAL_DOWN_NEG":
+        //Handle word placement if diagonal down left 
+        if(!checkWordFits(wordToInsert, row, cell, dir)) return; //Check if the word can be contained in the grid.     
+        if(!validateCellPlacement(wordToInsert, row, cell, dir)) return; //Check if the word will replace any other letters in the grid.
 
+        //Place letters diagonally right
+        //Slice each row and replace one cell for every letter. Increment both cell and row.
+        for(let i = 0; i < wordToInsert.length; i++){
+          setLetters((prev)=>{
+       
+            return ([...prev.slice(0,row+i), [...prev[row+i].slice(0,cell-i), wordToInsert[i], ...prev[row+i].slice(cell+1-i)], ...prev.slice(row+1+i)])
+
+        })
+        }
 
       break;
-    case "DIAGONAL_RIGHT":
-        //Handle word placement if diagonal right
+      case "DIAGONAL_DOWN_POS":
+        //Handle word placement if diagonal down right 
+        if(!checkWordFits(wordToInsert, row, cell, dir)) return; //Check if the word can be contained in the grid.     
+        if(!validateCellPlacement(wordToInsert, row, cell, dir)) return; //Check if the word will replace any other letters in the grid.
 
+        //Place letters diagonally right
+        //Slice each row and replace one cell for every letter. Increment both cell and row.
+        for(let i = 0; i < wordToInsert.length; i++){
+          setLetters((prev)=>{
+       
+            return ([...prev.slice(0,row+i), [...prev[row+i].slice(0,cell+i), wordToInsert[i], ...prev[row+i].slice(cell+1+i)], ...prev.slice(row+1+i)])
+
+        })
+        }
 
       break;
   }
@@ -122,7 +212,7 @@ function checkWordFits(word, row, cell, dir){
   let sum;
 
   switch(dir){
-    case "HORIZONTAL":
+    case "HORIZONTAL_POS":
         //Handle word placement if horizontal  
 
       
@@ -131,7 +221,16 @@ function checkWordFits(word, row, cell, dir){
         sum = word.length + cell
       
         return sum <= rowLength ? true : false;
-    case "VERTICAL":
+    case "HORIZONTAL_NEG":
+        //Handle word placement if horizontal  
+
+      
+        // Subtract the length of the word from the cell index, if the word "fits", the sum will be >= 0.
+      
+        sum = cell - word.length
+      
+        return sum >= 0 ? true : false;
+    case "VERTICAL_POS":
         //Handle word placement if vertical  
 
       
@@ -141,16 +240,72 @@ function checkWordFits(word, row, cell, dir){
       
         return sum <= rowCount ? true : false;
 
-    case "DIAGONAL_LEFT":
-        //Handle word placement if diagonal left 
+        case "VERTICAL_NEG":
+          //Handle word placement if vertical  
+  
+        
+          // Subtract the length of the word from the row index, if the word "fits", the sum will be >= 0.
+        
+          sum = row - word.length;
+        
+          return sum >= 0 ? true : false;
+  
+    case "DIAGONAL_UP_NEG":
+        //Handle word placement if diagonal up left 
 
+        // Subtract length of word from row. Must be >= 0. Subtract word length from cell, must be >= 0.
+
+        sum = row - word.length;
+        if(sum >= 0){
+          sum = cell - word.length;
+          if(sum >= 0){
+            return true
+          }
+        }
+        return false
 
       break;
-    case "DIAGONAL_RIGHT":
-        //Handle word placement if diagonal right
+    case "DIAGONAL_UP_POS":
+        //Handle word placement if diagonal up right
 
+          // Subtract length of word from row. Must be >= 0. Add word length to cell, must be <= row length.
 
-      break;
+          sum = row - word.length;
+          if(sum >= 0){
+            sum = word.length + cell;
+            if(sum <= rowLength){
+              return true
+            }
+          }
+          return false
+
+        
+
+        case "DIAGONAL_DOWN_NEG":
+          //Handle word placement if diagonal down left 
+          // Subtract length of word from the cell. Must be >= 0. Add word length to row, must be <= total rows.
+
+            sum = cell - word.length;
+            if(sum >= 0){
+              sum = row + word.length;
+              if(sum <= rowCount){
+                return true
+              }
+            }
+            return false
+
+        case "DIAGONAL_DOWN_POS":
+          //Handle word placement if diagonal down right 
+          // Add length of word to both the row index and the cell index, sum must be <= both.
+
+          sum = word.length + cell
+          if(sum <= rowLength){
+            sum = word.length + row;
+            if(sum <= rowCount){
+              return true
+            }
+          }
+          return false
   }
 
 }
@@ -170,38 +325,85 @@ function getCellsToBeReplaced(word, row, cell, dir){
 
   const cells = []
   switch(dir){
-    case "HORIZONTAL":
+    case "HORIZONTAL_POS":
       for(let i = 0; i < word.length; i++){
         cells.push({
+          letter: word[i],
           row: row,
           cell: cell+i
         })
       } 
       break;
-    case "VERTICAL":
+      case "HORIZONTAL_NEG":
+        for(let i = 0; i < word.length; i++){
+          cells.push({
+            letter: word[i],
+            row: row,
+            cell: cell-i
+          })
+        } 
+        break;
+    case "VERTICAL_POS":
       for(let i = 0; i < word.length; i++){
         cells.push({
+          letter: word[i],
           row: row+i,
           cell: cell
         })
       } 
       break;
-    case "DIAGONAL_LEFT":
-      // for(let i = 0; i < word.length; i++){
-      //   cells.push({
-      //     row: row,
-      //     cell: cell+i
-      //   })
-      // } 
+      case "VERTICAL_NEG":
+        for(let i = 0; i < word.length; i++){
+          cells.push({
+            letter: word[i],
+            row: row-i,
+            cell: cell
+          })
+        } 
+        break;
+    case "DIAGONAL_UP_NEG":
+                    //Handle word placement if diagonal up left 
+      for(let i = 0; i < word.length; i++){
+        cells.push({
+          letter: word[i],
+          row: row-i,
+          cell: cell-i
+        })
+      } 
       break;
-    case "DIAGONAL_RIGHT":
-      // for(let i = 0; i < word.length; i++){
-      //   cells.push({
-      //     row: row,
-      //     cell: cell+i
-      //   })
-      // } 
+    case "DIAGONAL_UP_POS":
+              //Handle word placement if diagonal up right 
+              for(let i = 0; i < word.length; i++){
+                cells.push({
+                  letter: word[i],
+                  row: row-i,
+                  cell: cell+i
+                })
+              } 
+              break;
+
+      case "DIAGONAL_DOWN_NEG":
+        //Handle word placement if diagonal down left 
+        for(let i = 0; i < word.length; i++){
+          cells.push({
+            letter: word[i],
+            row: row+i,
+            cell: cell-i
+          })
+        } 
+        break;
+
       break;
+      case "DIAGONAL_DOWN_POS":
+        //Handle word placement if diagonal down right 
+        for(let i = 0; i < word.length; i++){
+          cells.push({
+            letter: word[i],
+            row: row+i,
+            cell: cell+i
+          })
+        } 
+        break;
   }
 
   console.log("Cells to be replaced..", cells, word, dir, cell, row)
@@ -215,7 +417,7 @@ function getCellsToBeReplaced(word, row, cell, dir){
 //Reusable
 
 function isCellEmpty(cell){
-  return letters[cell.row][cell.cell] === "" ? true : false;
+  return letters[cell.row][cell.cell] === "" || letters[cell.row][cell.cell] === cell.letter ? true : false;
 }
 
 
