@@ -40,6 +40,11 @@ export default function Home() {
 
 
   
+  function getDirection(){
+    const directions = ["HORIZONTAL", "VERTICAL"];
+    const dir = directions[Math.floor(Math.random()*directions.length)];
+    return dir
+  }
 
 function findWordInsertLocation(){
 
@@ -54,10 +59,166 @@ function findWordInsertLocation(){
 
 function handleClick(){
   const {row, cell} = findWordInsertLocation();
-  setLetters((prev)=>{
-    return ([...prev.slice(0,row), [...prev[row].slice(0,cell), "A", ...prev[row].slice(cell+1)], ...prev.slice(row+1)])
-  })
+  const wordToInsert = getWord();
+  const dir = getDirection();
+
+  switch(dir){
+    case "HORIZONTAL":
+        //Handle word placement if horizontal  
+
+        if(!checkWordFits(wordToInsert, row, cell, dir)) return; //Check if the word can be contained in the grid.
+        if(!validateCellPlacement(wordToInsert, row, cell, dir)) return; //Check if the word will replace any other letters in the grid.
+
+        //Place letters
+        setLetters((prev)=>{
+          return ([...prev.slice(0,row), [...prev[row].slice(0,cell), ...wordToInsert, ...prev[row].slice(cell+wordToInsert.length)], ...prev.slice(row+1)])
+        })
+
+      break;
+    case "VERTICAL":
+        //Handle word placement if vertical  
+        if(!checkWordFits(wordToInsert, row, cell, dir)) return; //Check if the word can be contained in the grid.     
+        if(!validateCellPlacement(wordToInsert, row, cell, dir)) return; //Check if the word will replace any other letters in the grid.
+
+        //Place letters vertically
+        //Slice each row and replace one cell for every letter.
+        for(let i = 0; i < wordToInsert.length; i++){
+          setLetters((prev)=>{
+       
+            return ([...prev.slice(0,row+i), [...prev[row+i].slice(0,cell), wordToInsert[i], ...prev[row+i].slice(cell+1)], ...prev.slice(row+1+i)])
+
+        })
+        }
+
+
+      break;
+    case "DIAGONAL_LEFT":
+        //Handle word placement if diagonal left 
+
+
+      break;
+    case "DIAGONAL_RIGHT":
+        //Handle word placement if diagonal right
+
+
+      break;
+  }
+  
+ 
 }
+
+function getWord(){
+  let word = words[Math.floor(Math.random() * words.length)];
+  if(Math.random() >= 0.5) {
+    word = word.split("").reverse().join("");
+  }
+  return word;
+}
+
+function checkWordFits(word, row, cell, dir){
+
+  const rowCount = letters.length; //The amount of rows in the grid..
+  const rowLength = letters[row].length; //How many cells this row has..
+  let sum;
+
+  switch(dir){
+    case "HORIZONTAL":
+        //Handle word placement if horizontal  
+
+      
+        // Add the length of the word to the cell index, if the word "fits", the sum will be <= the rowLength.
+      
+        sum = word.length + cell
+      
+        return sum <= rowLength ? true : false;
+    case "VERTICAL":
+        //Handle word placement if vertical  
+
+      
+        // Add the length of the word to the row index, if the word "fits", the sum will be <= the rowCount.
+      
+        sum = word.length + row
+      
+        return sum <= rowCount ? true : false;
+
+    case "DIAGONAL_LEFT":
+        //Handle word placement if diagonal left 
+
+
+      break;
+    case "DIAGONAL_RIGHT":
+        //Handle word placement if diagonal right
+
+
+      break;
+  }
+
+}
+
+function validateCellPlacement(word, row, cell, dir){
+  const cellsToFill = getCellsToBeReplaced(word, row, cell, dir);
+  let allCellsEmpty = true;
+  cellsToFill.forEach((item)=>{
+    if(!isCellEmpty(item)){
+      allCellsEmpty = false;
+    }
+  })
+  return allCellsEmpty;
+}
+
+function getCellsToBeReplaced(word, row, cell, dir){
+
+  const cells = []
+  switch(dir){
+    case "HORIZONTAL":
+      for(let i = 0; i < word.length; i++){
+        cells.push({
+          row: row,
+          cell: cell+i
+        })
+      } 
+      break;
+    case "VERTICAL":
+      for(let i = 0; i < word.length; i++){
+        cells.push({
+          row: row+i,
+          cell: cell
+        })
+      } 
+      break;
+    case "DIAGONAL_LEFT":
+      // for(let i = 0; i < word.length; i++){
+      //   cells.push({
+      //     row: row,
+      //     cell: cell+i
+      //   })
+      // } 
+      break;
+    case "DIAGONAL_RIGHT":
+      // for(let i = 0; i < word.length; i++){
+      //   cells.push({
+      //     row: row,
+      //     cell: cell+i
+      //   })
+      // } 
+      break;
+  }
+
+  console.log("Cells to be replaced..", cells, word, dir, cell, row)
+
+
+  return cells
+}
+
+
+
+//Reusable
+
+function isCellEmpty(cell){
+  return letters[cell.row][cell.cell] === "" ? true : false;
+}
+
+
 
 
 
