@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
@@ -8,15 +8,18 @@ export default function Home() {
 
   const numCells = 100;
   const columnCount = 10;
-  const words = ["APPLE", "BANANA", "KIWI", "PINEAPPLE", "ORANGE", "MANGO", "STRAWBERRY"];
+  const words = ["APPLE", "BANANA", "KIWI", "PINEAPPLE", "ORANGE", "MANGO", "STRAWBERRY", "PEAR", "CHERRY","MELON"];
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+
   const [letters, setLetters] = useState([]);
+  const usedWords = useRef([])
 
   useEffect(() => {
-
+    console.log(words.join("").length)
 
     setLetters(()=>{
+      
       
       const bigArr = [];
       let arr = [];
@@ -40,9 +43,7 @@ export default function Home() {
 
 
 function findWordInsertLocation(wordToInsert){
-
   const insertionPositions = letters.map((row, rowIndex)=>{
-
     return row.map((cell, cellIndex)=>{
       return {
         row: rowIndex,
@@ -70,7 +71,7 @@ function findWordInsertLocation(wordToInsert){
   return row.length > 0
 })
 
- console.log("Grid insertion locations", insertionPositions)
+ //console.log("Grid insertion locations for word:", wordToInsert, insertionPositions)
 
  if(insertionPositions.length === 0) return null;
 
@@ -85,46 +86,84 @@ return {
 }
 }
 
+useEffect(() => {
+  
+
+    handleClick();
+
+
+}, [letters]);
+
+function regenerateGrid(){
+  usedWords.current = []
+  setLetters(()=>{
+          
+    const bigArr = [];
+    let arr = [];
+    for(let i = 0; i < numCells; i++){
+
+      //arr.push(alphabet[Math.floor(Math.random() * alphabet.length)].toUpperCase())
+      arr.push("")
+      if(arr.length === columnCount) 
+      {
+      bigArr.push(arr);
+      arr = [];
+      }
+
+    }
+    return bigArr;
+  })
+}
+
+function getNextWord(){
+
+  const unusedWords = words.filter((word)=>{
+    return !usedWords.current.includes(word)
+  })
+  usedWords.current = [...usedWords.current, unusedWords[0]]
+  if(unusedWords.length === 0) return null
+  return unusedWords[0]
+
+}
+
 function handleClick(){
 
-  let wordsAdded = 0;
-  for (let i = 0; i < words.length; i ++){
 
+      const wordToInsert = getNextWord();
+      if(wordToInsert === null) {
+        console.log("All words added.")
+        return;
+      };
 
+      //Handle automatic generation of the grid. 
+        // Once a word is chosen, loop through every available cell.
+        // On each iteration, run checks in each direction to validate/invalidate word placement.
+        // Return this as an object with each directional boolean as a prop.
+        // Finally, choose a random object from this list and a (true) direction to be used as the insertion position of the word.
+        // If the returned list has no available spaces, but the word passed the pre-generation validation checks, clear all words, and restart the generation process   from the beginning.
+      
+        
+        // Return the coordinates for the word to be inserted, as well as a direction.
+        if(findWordInsertLocation(wordToInsert) === null) {
+          console.log("No spaces left! Regenerating grid...")
+          regenerateGrid();
+          return
+        }
+        const {row, cell, dir} = findWordInsertLocation(wordToInsert);
     
-  
+        
+      insertWord(wordToInsert, row, cell, dir)
 
-  const wordToInsert = getWord();
 
-  //Handle automatic generation of the grid. 
-    // Once a word is chosen, loop through every available cell.
-    // On each iteration, run checks in each direction to validate/invalidate word placement.
-    // Return this as an object with each directional boolean as a prop.
-    // Finally, choose a random object from this list and a (true) direction to be used as the insertion position of the word.
-    // If the returned list has no available spaces, but the word passed the pre-generation validation checks, clear all words, and restart the generation process   from the beginning.
-  
-    
-    // Return the coordinates for the word to be inserted, as well as a direction.
-    if(findWordInsertLocation(wordToInsert) === null) {
-      console.log("No spaces left!")
-      console.log("Words added:", wordsAdded)
-      return
-    }
-    const {row, cell, dir} = findWordInsertLocation(wordToInsert);
-
-    
-    console.log(row, cell, dir);
-
-    insertWord(wordToInsert, row, cell, dir)
-    wordsAdded++;
-}
 }
 
 function insertWord(wordToInsert, row, cell, dir){
+
   switch(dir){
     case "HORIZONTAL_POS":
         //Handle word placement if horizontal  
 
+        
         for(let i = 0; i < wordToInsert.length; i++){
         setLetters((prev)=>{
           return ([...prev.slice(0,row), [...prev[row].slice(0,cell+i), wordToInsert[i], ...prev[row].slice(cell+1+i)], ...prev.slice(row+1)])
@@ -193,8 +232,6 @@ function insertWord(wordToInsert, row, cell, dir){
   
         break;
 
-
-      break;
       case "DIAGONAL_DOWN_NEG":
         //Handle word placement if diagonal down left 
         //Place letters diagonally right
@@ -222,6 +259,7 @@ function insertWord(wordToInsert, row, cell, dir){
 
       break;
   }
+  
 }
 
 function getWord(){
@@ -338,21 +376,31 @@ function checkWordFits(word, row, cell, dir){
 }
 
 function validateWordInsertion(word, row, cell, dir){
+
   if(!checkWordFits(word, row, cell, dir)) return false;
+
   const cellsToFill = getCellsToBeReplaced(word, row, cell, dir);
+
   let validated = true;
   let lettersOverwritten = 0;
   cellsToFill.forEach((item)=>{
+
     if(!isCellEmpty(item)){
 
-      validated = false;
+      if(!isCellSame(item)){
+        validated = false;
+      }
+      else{
+        lettersOverwritten++;
+        if(lettersOverwritten >= word.length){
+          validated = false;
+        }
+      }
+
+
     }
-    if(isCellOverwritten(item)){
-      lettersOverwritten++;
-    }
-    if(lettersOverwritten > 1){
-      validated = false;
-    }
+
+
     
 
   })
@@ -430,8 +478,6 @@ function getCellsToBeReplaced(word, row, cell, dir){
           })
         } 
         break;
-
-      break;
       case "DIAGONAL_DOWN_POS":
         //Handle word placement if diagonal down right 
         for(let i = 0; i < word.length; i++){
@@ -443,8 +489,6 @@ function getCellsToBeReplaced(word, row, cell, dir){
         } 
         break;
   }
-
-
   return cells
 }
 
@@ -457,7 +501,7 @@ function isCellEmpty(cell){
   return letters[cell.row][cell.cell] === "" ? true : false;
 }
 
-function isCellOverwritten(cell){
+function isCellSame(cell){
   return letters[cell.row][cell.cell] === cell.letter ? true : false;
 }
 
