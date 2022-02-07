@@ -8,15 +8,18 @@ export default function Home() {
 
   const numCells = 100;
   const columnCount = 10;
-  const words = ["APPLE", "BANANA", "KIWI", "PINEAPPLE", "ORANGE", "MANGO", "STRAWBERRY", "PEAR", "CHERRY","MELON"];
+  const words = ["APPLE", "BANANA", "KIWI", "PINEAPPLE", "ORANGE", "MANGO", "STRAWBERRY", "PEAR", "CHERRY", "MELON"];
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  const maxWords = Math.floor(numCells / 10);
+  const maxChars = Math.floor(numCells/100*60)
+  const chars = words.join("").length;
 
 
   const [letters, setLetters] = useState([]);
   const usedWords = useRef([])
 
   useEffect(() => {
-    console.log(words.join("").length)
+  
 
     setLetters(()=>{
       
@@ -36,6 +39,7 @@ export default function Home() {
       }
       return bigArr;
     })
+
   
 
   }, []);
@@ -88,6 +92,15 @@ return {
 
 useEffect(() => {
   
+  
+  if(chars > maxChars) {
+    console.log(`Too many characters in combined words. Maximum is ${maxChars}, current is ${chars}.`)
+    return;
+  }
+  if(words.length > maxWords){
+    console.log(`Too many words to add. Maximum is ${maxWords}, current is ${words.length}.`);
+    return;
+  }
 
     handleClick();
 
@@ -145,7 +158,7 @@ function handleClick(){
         
         // Return the coordinates for the word to be inserted, as well as a direction.
         if(findWordInsertLocation(wordToInsert) === null) {
-          console.log("No spaces left! Regenerating grid...")
+          console.log("Generating grid...")
           regenerateGrid();
           return
         }
