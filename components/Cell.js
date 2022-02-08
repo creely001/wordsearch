@@ -7,14 +7,13 @@ function Cell({letter, row, cell, onSelect, isSelected, isCompleted}){
     const [completed, setCompleted] = useState(isCompleted)
 
     const style = () => {
-        if(isCompleted){
-            console.log("his")
-            return {"backgroundColor": "green"}
-        }
         if(selected){
-            console.log("hi")
             return {"backgroundColor": "blue"}
         }
+        if(isCompleted){
+            return {"backgroundColor": "green"}
+        }
+
 
     }
 

@@ -8,7 +8,8 @@ import styles from '../styles/Home.module.css'
 
 const gridCellCount = 100;
 const gridColumnCount = 10;
-const words = ["APPLE", "BANANA", "KIWI", "PINEAPPLE", "ORANGE", "MANGO", "STRAWBERRY", "PEAR", "CHERRY", "MELON"];
+const words = ["APPLE", "BANANA", "MANGO", "KIWI", "ORANGE", "PEAR", "STRAWBERRY", "MELON", "GRAPE", "PINEAPPLE"];
+
 
 
 export default function Home() {
@@ -18,6 +19,7 @@ const {letters} = useWordSearchGrid(gridCellCount, gridColumnCount, words);
 const selectedCellsRef = useRef([])
 const [selectedCells, setSelectedCells] = useState([])
 const [completedCells, setCompletedCells] = useState([])
+const [wordsRemaining, setWordsRemaining] = useState(words);
 
 function handleCellSelected(e,row,cell){
 
@@ -36,12 +38,11 @@ function handleCellSelected(e,row,cell){
       return;
     };
     const isWord = validateWordFromSelectedCells(selectedCells)
-    console.log(isWord);
     if(isWord){
-      console.log("word found")
       setCompletedCells((prev)=>{
         return [...prev, ...selectedCells]
       })
+
     }
     setSelectedCells(selectedCells)
     setTimeout(() => {
@@ -60,6 +61,13 @@ function validateWordFromSelectedCells(cells){
   const reversedWord = word.split("").reverse().join("")
   console.log(word, reversedWord)
   if(!words.includes(word) || words.includes(reversedWord)) return false;
+  
+  setWordsRemaining((prev)=>{
+    return prev.filter((prevWord)=>{
+      return prevWord !== word
+    })    
+  })
+
   return true;
 }
 
@@ -105,7 +113,6 @@ function getDirection(vector){
     if(vector.cell < 0) return "DIAGONAL_UP_NEG"
   }
   else {
-    console.log("error")
     return
   }
 
@@ -211,6 +218,7 @@ function getSelectedCells(count, row, cell, dir){
   }
 
 
+
   return (
     <div className={styles.container}>
       <Head>
@@ -238,9 +246,16 @@ function getSelectedCells(count, row, cell, dir){
 
 
 
-        </div>
 
-        <button onClick={handleClick}>Clicketh!</button>
+        </div>
+        <div style={{"display": "flex", "gap": "2em"}}>
+            {words.map((word, index)=>{
+              return <h4 key={index} style={!wordsRemaining.includes(word) ? {"textDecoration": "line-through"} : {}}>{word}</h4>
+            })}
+          </div>
+
+          {wordsRemaining.length === 0 ? <p>All words found!</p> : <p></p>}
+        <button onClick={handleClick}>Restart</button>
 
       </main>
 

@@ -30,7 +30,18 @@ table, td{
 }
 
 td{
+  padding:1em;
+  border: solid black 2px;
   width: 60px;
   height: 60px;
+
+  
 }
+
+/* HORIZONTAL LINE   background: linear-gradient(0deg, transparent 47%, red 47%, red 53%, transparent 53%) 0 
+   VERTICAL LINE     background: linear-gradient(90deg, transparent 47%, red 47%, red 53%, transparent 53%) 0 
+   DIAGONAL LINE 1  background: linear-gradient(45deg, transparent 47%, red 47%, red 53%, transparent 53%) 0 
+   DIAGONAL LINE 2   background: linear-gradient(135deg, transparent 47%, red 47%, red 53%, transparent 53%) 0 
+
+*/
 
