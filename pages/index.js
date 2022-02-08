@@ -17,6 +17,7 @@ const {letters} = useWordSearchGrid(gridCellCount, gridColumnCount, words);
 
 const selectedCellsRef = useRef([])
 const [selectedCells, setSelectedCells] = useState([])
+const [completedCells, setCompletedCells] = useState([])
 
 function handleCellSelected(e,row,cell){
 
@@ -34,11 +35,34 @@ function handleCellSelected(e,row,cell){
       selectedCellsRef.current = []
       return;
     };
+    const isWord = validateWordFromSelectedCells(selectedCells)
+    console.log(isWord);
+    if(isWord){
+      console.log("word found")
+      setCompletedCells((prev)=>{
+        return [...prev, ...selectedCells]
+      })
+    }
     setSelectedCells(selectedCells)
+    setTimeout(() => {
+      setSelectedCells([])
+    }, 100);
     selectedCellsRef.current = []
 
   }
 }
+
+
+function validateWordFromSelectedCells(cells){
+  const word = cells.map((cell)=>{
+    return cell.letter;
+  }).join("")
+  const reversedWord = word.split("").reverse().join("")
+  console.log(word, reversedWord)
+  if(!words.includes(word) || words.includes(reversedWord)) return false;
+  return true;
+}
+
 
 function validateCellSelection(selection){
   const startPos = {
@@ -105,6 +129,7 @@ function getSelectedCells(count, row, cell, dir){
     case "HORIZONTAL_POS":
       for(let i = 0; i < count; i++){
         cells.push({
+          letter: letters[row][cell+i],
           row: row,
           cell: cell+i
         })
@@ -113,6 +138,7 @@ function getSelectedCells(count, row, cell, dir){
       case "HORIZONTAL_NEG":
         for(let i = 0; i < count; i++){
           cells.push({
+                      letter: letters[row][cell-i],
             row: row,
             cell: cell-i
           })
@@ -121,6 +147,7 @@ function getSelectedCells(count, row, cell, dir){
     case "VERTICAL_POS":
       for(let i = 0; i < count; i++){
         cells.push({
+                    letter: letters[row+i][cell],
           row: row+i,
           cell: cell
         })
@@ -129,6 +156,7 @@ function getSelectedCells(count, row, cell, dir){
       case "VERTICAL_NEG":
         for(let i = 0; i < count; i++){
           cells.push({
+                      letter: letters[row-i][cell],
 
             row: row-i,
             cell: cell
@@ -139,6 +167,7 @@ function getSelectedCells(count, row, cell, dir){
                     //Handle word placement if diagonal up left 
       for(let i = 0; i < count; i++){
         cells.push({
+                    letter: letters[row-i][cell-i],
           row: row-i,
           cell: cell-i
         })
@@ -148,6 +177,7 @@ function getSelectedCells(count, row, cell, dir){
               //Handle word placement if diagonal up right 
               for(let i = 0; i < count; i++){
                 cells.push({
+                            letter: letters[row-i][cell+i],
       
                   row: row-i,
                   cell: cell+i
@@ -159,6 +189,7 @@ function getSelectedCells(count, row, cell, dir){
         //Handle word placement if diagonal down left 
         for(let i = 0; i < count; i++){
           cells.push({
+                      letter: letters[row+i][cell-i],
             row: row+i,
             cell: cell-i
           })
@@ -168,6 +199,7 @@ function getSelectedCells(count, row, cell, dir){
         //Handle word placement if diagonal down right 
         for(let i = 0; i < count; i++){
           cells.push({
+                      letter: letters[row+i][cell+i],
 
             row: row+i,
             cell: cell+i
@@ -197,7 +229,7 @@ function getSelectedCells(count, row, cell, dir){
 
           {letters.map((arr, index)=>{    
 
-            return <Row key={Math.random()} selectedCells={selectedCells} cells={arr} row={index} onSelect={handleCellSelected}/>
+            return <Row key={Math.random()} selectedCells={selectedCells} completedCells={completedCells} cells={arr} row={index} onSelect={handleCellSelected}/>
 
           })}
 
