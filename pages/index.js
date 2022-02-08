@@ -47,7 +47,7 @@ function handleCellSelected(e,row,cell){
     setSelectedCells(selectedCells)
     setTimeout(() => {
       setSelectedCells([])
-    }, 100);
+    }, 200);
     selectedCellsRef.current = []
 
   }
@@ -59,7 +59,6 @@ function validateWordFromSelectedCells(cells){
     return cell.letter;
   }).join("")
   const reversedWord = word.split("").reverse().join("")
-  console.log(word, reversedWord)
   if(!words.includes(word) || words.includes(reversedWord)) return false;
   
   setWordsRemaining((prev)=>{
@@ -119,11 +118,7 @@ function getDirection(vector){
 }
 
 function handleClick(){
-  const cells = document.querySelectorAll(".cell");
-  for(let i = 0; i < cells.length; i++){
-    if(cells[i].textContent === "Z")
-    cells[i].textContent = "";
-  }
+  window.location.reload();
 }
 
 function getSelectedCells(count, row, cell, dir){
@@ -255,7 +250,7 @@ function getSelectedCells(count, row, cell, dir){
         </div>
         <div style={{"display": "flex", "gap": "2em"}}>
             {words.map((word, index)=>{
-              return <h4 key={index} style={!wordsRemaining.includes(word) ? {"textDecoration": "line-through"} : {}}>{word}</h4>
+              return <h4 key={index} style={!wordsRemaining.includes(word) ? {"textDecoration": "line-through", "textDecorationThickness": "3px"} : {}}>{word}</h4>
             })}
           </div>
 

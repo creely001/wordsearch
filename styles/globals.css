@@ -37,8 +37,9 @@ td{
 
 }
 
-.completed-letter{
-  background: linear-gradient(45deg, transparent 47%, red 47%, red 53%, transparent 53%) 0
+td{
+  /* background: radial-gradient(circle, #FBCEB1 28%, #FBCEB1 50%, #fff 60%) */
+  /* background: linear-gradient(0deg, transparent 45%, #1a8997 47%, #1a8997 53%, transparent 55%) 0; */
 }
 
 
