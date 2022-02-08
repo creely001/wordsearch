@@ -157,6 +157,7 @@ function addRandomLetters(){
 }
 
 function getRandomLetter(){
+  return " "
   return alphabet[Math.floor(Math.random()*alphabet.length)];
   }
 
@@ -422,6 +423,7 @@ cellsToFill.forEach((item)=>{
     }
     else{
       lettersOverwritten++;
+      console.log(lettersOverwritten)
       if(lettersOverwritten >= word.length){
         validated = false;
       }

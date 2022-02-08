@@ -136,6 +136,7 @@ function getSelectedCells(count, row, cell, dir){
     case "HORIZONTAL_POS":
       for(let i = 0; i < count; i++){
         cells.push({
+  direction: dir,          
           letter: letters[row][cell+i],
           row: row,
           cell: cell+i
@@ -145,7 +146,8 @@ function getSelectedCells(count, row, cell, dir){
       case "HORIZONTAL_NEG":
         for(let i = 0; i < count; i++){
           cells.push({
-                      letter: letters[row][cell-i],
+            direction: dir,
+            letter: letters[row][cell-i],
             row: row,
             cell: cell-i
           })
@@ -154,7 +156,8 @@ function getSelectedCells(count, row, cell, dir){
     case "VERTICAL_POS":
       for(let i = 0; i < count; i++){
         cells.push({
-                    letter: letters[row+i][cell],
+          direction: dir,
+          letter: letters[row+i][cell],
           row: row+i,
           cell: cell
         })
@@ -163,8 +166,8 @@ function getSelectedCells(count, row, cell, dir){
       case "VERTICAL_NEG":
         for(let i = 0; i < count; i++){
           cells.push({
-                      letter: letters[row-i][cell],
-
+            direction: dir,
+            letter: letters[row-i][cell],
             row: row-i,
             cell: cell
           })
@@ -174,7 +177,8 @@ function getSelectedCells(count, row, cell, dir){
                     //Handle word placement if diagonal up left 
       for(let i = 0; i < count; i++){
         cells.push({
-                    letter: letters[row-i][cell-i],
+          direction: dir,
+          letter: letters[row-i][cell-i],
           row: row-i,
           cell: cell-i
         })
@@ -184,8 +188,8 @@ function getSelectedCells(count, row, cell, dir){
               //Handle word placement if diagonal up right 
               for(let i = 0; i < count; i++){
                 cells.push({
-                            letter: letters[row-i][cell+i],
-      
+                  direction: dir,
+                  letter: letters[row-i][cell+i],
                   row: row-i,
                   cell: cell+i
                 })
@@ -196,7 +200,8 @@ function getSelectedCells(count, row, cell, dir){
         //Handle word placement if diagonal down left 
         for(let i = 0; i < count; i++){
           cells.push({
-                      letter: letters[row+i][cell-i],
+            direction: dir,
+            letter: letters[row+i][cell-i],
             row: row+i,
             cell: cell-i
           })
@@ -206,8 +211,8 @@ function getSelectedCells(count, row, cell, dir){
         //Handle word placement if diagonal down right 
         for(let i = 0; i < count; i++){
           cells.push({
-                      letter: letters[row+i][cell+i],
-
+              direction: dir,
+            letter: letters[row+i][cell+i],
             row: row+i,
             cell: cell+i
           })
