@@ -136,14 +136,15 @@ return unusedWords[0]
 
 function addRandomLetters(){
 
-  const isGridFull = letters.map((row)=>{
+  const remainingCells = letters.map((row)=>{
     return row.filter((cell)=>{
       return cell === ""
     })
+  }).filter((row)=>{
+    return row.length !== 0;
   })
 
-  console.log(isGridFull)
-  if(isGridFull.length === 0) return true
+  if(remainingCells.length === 0) return null;
 
  setLetters((prev) => {
   return prev.map((row)=>{
@@ -152,6 +153,7 @@ function addRandomLetters(){
     })
   })
  }) 
+
 }
 
 function getRandomLetter(){
@@ -165,8 +167,8 @@ function initWord(){
     if(wordToInsert === null) {
       console.log("All words added.")
   
-      console.log(addRandomLetters());
-      if(addRandomLetters()) return;
+      return addRandomLetters() === null ? addRandomLetters() : null
+
     };
 
     //Handle automatic generation of the grid. 
@@ -528,8 +530,6 @@ return letters[cell.row][cell.cell] === "" ? true : false;
 function isCellSame(cell){
 return letters[cell.row][cell.cell] === cell.letter ? true : false;
 }
-
-console.log(letters)
 
 return {letters}
 
