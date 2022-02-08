@@ -7,6 +7,9 @@ function Row({cells, row, onSelect, selectedCells}){
         const arr = selectedCells.filter((cell)=>{
             return cell.row == row && cell.cell == cellIndex
         })
+        if(arr.length !== 0){
+            console.log(row,cellIndex, arr)
+        }
         return arr.length !== 0
     }
     

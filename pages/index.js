@@ -13,9 +13,9 @@ const words = ["APPLE", "BANANA", "KIWI", "PINEAPPLE", "ORANGE", "MANGO", "STRAW
 
 export default function Home() {
 
-const {letters, getRandomLetter} = useWordSearchGrid(gridCellCount, gridColumnCount, words);
+const {letters} = useWordSearchGrid(gridCellCount, gridColumnCount, words);
 
-//const selectedCells = useRef([])
+const selectedCellsRef = useRef([])
 const [selectedCells, setSelectedCells] = useState([])
 
 function handleCellSelected(e,row,cell){
@@ -25,21 +25,22 @@ function handleCellSelected(e,row,cell){
     cell
   } 
 
-  setSelectedCells([...selectedCells, gridPos])
-  return
-  if(selectedCells.current.length >= 2){
-    selectedCells.current = [validateCellSelection(selectedCells.current)]
-    
-    setTimeout(() => {
-      selectedCells.current = []
-      console.log("State clear")
-    }, 1000);
+  selectedCellsRef.current  = [...selectedCellsRef.current, gridPos]
+  setSelectedCells(selectedCellsRef.current)
+  if(selectedCellsRef.current.length >= 2){
+    const selectedCells = validateCellSelection(selectedCellsRef.current)
+    if(!selectedCells){
+      setSelectedCells([])
+      selectedCellsRef.current = []
+      return;
+    };
+    setSelectedCells(selectedCells)
+    selectedCellsRef.current = []
 
   }
 }
 
 function validateCellSelection(selection){
-
   const startPos = {
     row: selection[0].row, 
     cell: selection[0].cell}
