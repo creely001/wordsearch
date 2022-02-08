@@ -40,9 +40,6 @@ useEffect(() => {
 
 }, []);
 
-function getRandomLetter(){
-    return alphabet[Math.floor(Math.random()*alphabet.length)];
-    }
 
 
 function findWordInsertLocation(wordToInsert){
@@ -103,7 +100,6 @@ if(words.length > maxWords){
 
 initWord();
 
-
 }, [letters]);
 
 function regenerateGrid(){
@@ -138,16 +134,39 @@ return unusedWords[0]
 
 }
 
+function addRandomLetters(){
+
+  const isGridFull = letters.map((row)=>{
+    return row.filter((cell)=>{
+      return cell === ""
+    })
+  })
+
+  console.log(isGridFull)
+  if(isGridFull.length === 0) return true
+
+ setLetters((prev) => {
+  return prev.map((row)=>{
+    return row.map((cell)=>{
+      return cell || getRandomLetter()
+    })
+  })
+ }) 
+}
+
+function getRandomLetter(){
+  return alphabet[Math.floor(Math.random()*alphabet.length)];
+  }
+
 function initWord(){
 
 
     const wordToInsert = getNextWord();
     if(wordToInsert === null) {
       console.log("All words added.")
-      setLetters((prev)=>{
-        return prev
-      })
-      return;
+  
+      console.log(addRandomLetters());
+      if(addRandomLetters()) return;
     };
 
     //Handle automatic generation of the grid. 
@@ -501,10 +520,6 @@ switch(dir){
 return cells
 }
 
-
-
-//Reusable
-
 function isCellEmpty(cell){
 
 return letters[cell.row][cell.cell] === "" ? true : false;
@@ -514,6 +529,8 @@ function isCellSame(cell){
 return letters[cell.row][cell.cell] === cell.letter ? true : false;
 }
 
-return {letters, getRandomLetter}
+console.log(letters)
+
+return {letters}
 
 }

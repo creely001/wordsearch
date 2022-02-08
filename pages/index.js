@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Row from '../components/Row.js'
 import useWordSearchGrid from '../hooks/useWordSearchGrid';
-import {useRef} from 'react'
+import {useRef, useState, useEffect} from 'react'
 import styles from '../styles/Home.module.css'
 
 
@@ -13,16 +13,77 @@ const words = ["APPLE", "BANANA", "KIWI", "PINEAPPLE", "ORANGE", "MANGO", "STRAW
 
 export default function Home() {
 
-  
-
 const {letters, getRandomLetter} = useWordSearchGrid(gridCellCount, gridColumnCount, words);
 
-const selectedCells = useRef([])
+//const selectedCells = useRef([])
+const [selectedCells, setSelectedCells] = useState([])
 
-function toggleCellSelected(e){
-  console.log(e.target)
-  selectedCells.current = [...selectedCells.current, e.target.textContent]
-  console.log(selectedCells.current)
+function handleCellSelected(e,row,cell){
+
+  const gridPos = {
+    row,
+    cell
+  } 
+
+  setSelectedCells([...selectedCells, gridPos])
+  return
+  if(selectedCells.current.length >= 2){
+    selectedCells.current = [validateCellSelection(selectedCells.current)]
+    
+    setTimeout(() => {
+      selectedCells.current = []
+      console.log("State clear")
+    }, 1000);
+
+  }
+}
+
+function validateCellSelection(selection){
+
+  const startPos = {
+    row: selection[0].row, 
+    cell: selection[0].cell}
+  const endPos = {
+    row: selection[1].row,
+    cell: selection[1].cell}
+  const vector = {
+    row:endPos.row - startPos.row,
+    cell:endPos.cell - startPos.cell
+  }
+  if(!getDirection(vector)){
+    console.log("Invalid Selection")
+    return;
+  }
+  const arr = getSelectedCells(((Math.max(Math.abs(vector.row), Math.abs(vector.cell))) + 1),startPos.row,startPos.cell,getDirection(vector))
+  return arr
+  
+}
+
+function getDirection(vector){
+
+  if(vector.row === 0){
+    if(vector.cell > 0) return "HORIZONTAL_POS"
+    if(vector.cell < 0) return "HORIZONTAL_NEG"
+  }
+  if(vector.cell === 0){
+    if(vector.row > 0) return "VERTICAL_POS"
+    if(vector.row < 0) return "VERTICAL_NEG"
+  }
+  if(vector.row > 0){
+    if(Math.abs(vector.row) !== Math.abs(vector.cell)) return;
+    if(vector.cell > 0) return "DIAGONAL_DOWN_POS"
+    if(vector.cell < 0) return "DIAGONAL_DOWN_NEG"
+  }
+  if(vector.row < 0){
+    if(Math.abs(vector.row) !== Math.abs(vector.cell)) return;
+    if(vector.cell > 0) return "DIAGONAL_UP_POS"
+    if(vector.cell < 0) return "DIAGONAL_UP_NEG"
+  }
+  else {
+    console.log("error")
+    return
+  }
+
 }
 
 function handleClick(){
@@ -32,6 +93,89 @@ function handleClick(){
     cells[i].textContent = "";
   }
 }
+
+function getSelectedCells(count, row, cell, dir){
+
+//Takes in the length required, and the position to start at, as well as the direction,
+//Returns the total cells that will be selected.
+
+  const cells = []
+  switch(dir){
+    case "HORIZONTAL_POS":
+      for(let i = 0; i < count; i++){
+        cells.push({
+          row: row,
+          cell: cell+i
+        })
+      } 
+      break;
+      case "HORIZONTAL_NEG":
+        for(let i = 0; i < count; i++){
+          cells.push({
+            row: row,
+            cell: cell-i
+          })
+        } 
+        break;
+    case "VERTICAL_POS":
+      for(let i = 0; i < count; i++){
+        cells.push({
+          row: row+i,
+          cell: cell
+        })
+      } 
+      break;
+      case "VERTICAL_NEG":
+        for(let i = 0; i < count; i++){
+          cells.push({
+
+            row: row-i,
+            cell: cell
+          })
+        } 
+        break;
+    case "DIAGONAL_UP_NEG":
+                    //Handle word placement if diagonal up left 
+      for(let i = 0; i < count; i++){
+        cells.push({
+          row: row-i,
+          cell: cell-i
+        })
+      } 
+      break;
+    case "DIAGONAL_UP_POS":
+              //Handle word placement if diagonal up right 
+              for(let i = 0; i < count; i++){
+                cells.push({
+      
+                  row: row-i,
+                  cell: cell+i
+                })
+              } 
+              break;
+  
+      case "DIAGONAL_DOWN_NEG":
+        //Handle word placement if diagonal down left 
+        for(let i = 0; i < count; i++){
+          cells.push({
+            row: row+i,
+            cell: cell-i
+          })
+        } 
+        break;
+      case "DIAGONAL_DOWN_POS":
+        //Handle word placement if diagonal down right 
+        for(let i = 0; i < count; i++){
+          cells.push({
+
+            row: row+i,
+            cell: cell+i
+          })
+        } 
+        break;
+  }
+  return cells
+  }
 
 
   return (
@@ -52,7 +196,7 @@ function handleClick(){
 
           {letters.map((arr, index)=>{    
 
-            return <Row key={Math.random()} cells={arr} row={index} randomLetter={getRandomLetter} onSelect={toggleCellSelected}/>
+            return <Row key={Math.random()} selectedCells={selectedCells} cells={arr} row={index} onSelect={handleCellSelected}/>
 
           })}
 
