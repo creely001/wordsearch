@@ -14,15 +14,18 @@ const words = ["APPLE", "BANANA", "MANGO", "KIWI", "ORANGE", "PEAR", "STRAWBERRY
 
 export default function Home() {
 
-const {letters, wordLocations, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected, regenerateGrid} = useWordSearchGrid(gridCellCount, gridColumnCount, words);
+const {letters, wordLocations, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected, regenerateGrid, loaded} = useWordSearchGrid(gridCellCount, gridColumnCount, words);
 
 useEffect(() => {
   
   setWordsRemaining(wordLocations)
-  
+ 
 }, [letters]);
 
 
+if(!loaded){
+  return <div></div>
+}
   return (
     <div className={styles.container}>
       <Head>

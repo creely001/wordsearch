@@ -25,6 +25,7 @@ const selectedCellsRef = useRef([])
 const [selectedCells, setSelectedCells] = useState([])
 const [completedCells, setCompletedCells] = useState([])
 const [wordsRemaining, setWordsRemaining] = useState(wordLocations);
+const [loaded, setLoaded] = useState(false)
 
 
 function handleRegenerateGrid(){
@@ -32,6 +33,7 @@ function handleRegenerateGrid(){
   setSelectedCells([])
   setCompletedCells([])
   setWordsRemaining(wordLocations)
+  setLoaded(false)
 }
 
 function handleCellSelected(e,row,cell){
@@ -342,7 +344,9 @@ if(words.length > maxWords){
   return;
 }
 
-initWord();
+  initWord();
+
+
 
 }, [letters]);
 
@@ -394,7 +398,10 @@ function addRandomLetters(){
     return row.length !== 0;
   })
 
-  if(remainingCells.length === 0) return null;
+  if(remainingCells.length === 0){
+    setLoaded(true)
+    return null
+  }
 
  setLetters((prev) => {
   return prev.map((row)=>{
@@ -419,6 +426,7 @@ function initWord(){
     if(word === null) {
       //After all words have been added, fill remaining cells with random letters
       console.log("All words added.")
+
       return addRandomLetters() === null ? addRandomLetters() : null
 
     };
@@ -796,7 +804,8 @@ return letters[cell.row][cell.cell] === cell.letter ? true : false;
 
 
 
-return {letters, wordLocations: wordLocations.current, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected: handleCellSelected, regenerateGrid: handleRegenerateGrid}
+
+return {letters, wordLocations: wordLocations.current, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected: handleCellSelected, regenerateGrid: handleRegenerateGrid, loaded}
 
 
 }
