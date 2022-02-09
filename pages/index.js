@@ -12,13 +12,18 @@ const maxWords = Math.floor(gridCellCount / 10);
 const maxChars = Math.floor(gridCellCount/100*60)
 
 
-const wordList = ["APPLE", "BANANA", "MANGO", "KIWI", "ORANGE", "PEAR", "STRAWBERRY", "MELON", "GRAPE", "PINEAPPLE", "APRICOT", "ELDERBERRY", "DAMSON", "PLUM", "SULTANA", "BLUEBERRY", "GRAPEFRUIT", "KUMQUAT", "LIME", "LEMON", "RASPBERRY", "BLACKBERRY", "RHUBARB", "WATERMELON", "TOMATO"];
+//Constants/persist throughout renders
 
-
+const fruits = ["APPLE", "BANANA", "MANGO", "KIWI", "ORANGE", "PEAR", "STRAWBERRY", "MELON", "GRAPE", "PINEAPPLE", "APRICOT", "ELDERBERRY", "DAMSON", "PLUM", "SULTANA", "BLUEBERRY", "GRAPEFRUIT", "KUMQUAT", "LIME", "LEMON", "RASPBERRY", "BLACKBERRY", "RHUBARB", "WATERMELON", "TOMATO"];
+const vegetables = ["PEA", "CUCUMBER", "BROCCOLI", "AUBERGINE", "CARROT", "POTATO", "CHILI", "SPINACH", "LETTUCE", "MUSHROOM", "CABBAGE", "LEEK", "SWEETCORN", "PUMPKIN", "PARSNIP", "TURNIP", "RADISH", "CELERY"];
+const wordList = [{name: "Fruits", words: fruits},{name: "Vegetables", words: vegetables}]
 
 export default function Home() {
 
-const {letters, wordLocations, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected, regenerateGrid, loaded} = useWordSearchGrid(gridCellCount, gridColumnCount, wordList);
+const chosenList = wordList[Math.floor(Math.random() * wordList.length)] //Regenerated everytime
+const title = chosenList.name
+const {letters, wordLocations, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected, regenerateGrid, loaded} = useWordSearchGrid(gridCellCount, gridColumnCount, chosenList.words);
+
 
 useEffect(() => {
   
@@ -40,7 +45,7 @@ if(!loaded){
 
       <main className={styles.main}>
 
-
+      <h1>{title}</h1>
 
         <div className={styles.grid}>
           <table className="box"> 
