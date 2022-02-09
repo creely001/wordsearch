@@ -11,4 +11,4 @@ Fully customisable and dynamic. Options include:
 - Grid size (Total columns/cells)
 - Words/Themes
 
-[Preview](https://62038b1b9e6edb00590afbdf--eloquent-einstein-480905.netlify.app/)
+[Preview](https://eloquent-einstein-480905.netlify.app/)
