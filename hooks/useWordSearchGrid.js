@@ -452,7 +452,6 @@ function addRandomLetters(){
 }
 
 function getRandomLetter(){
-  return " "
   return alphabet[Math.floor(Math.random()*alphabet.length)];
   }
 
