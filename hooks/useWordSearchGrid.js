@@ -14,6 +14,8 @@ const maxChars = Math.floor(numCells/100*60)
   
 function getWords(){
 
+  return ["MANGO", "MELON", "MARGE", "MARCO", "MAOAM", "MERCY", "MOON"]
+
   const arr = []
   for(let i = 0; i < maxWords; i++){
     const word = wordList[Math.floor(Math.random() * wordList.length)]
@@ -97,11 +99,20 @@ function validateWordFromSelectedCells(cells){
   const words = wordLocations.current.map((word)=>{
     return word.insertedWord
   })
+  console.log(words)
   const lettersSelected = cells.map((cell)=>{
     return cell.letter;
   }).join("")
   const reversedLetters = lettersSelected.split("").reverse().join("")
-  if(!words.includes(lettersSelected) || words.includes(reversedLetters)) return false;
+
+  console.log(lettersSelected, reversedLetters)
+  if(!words.includes(lettersSelected)){
+
+    if(!words.includes(reversedLetters)){
+      return false;
+    }
+
+  } 
 
 
   // check word is "complete" and not just part of another word e.g apple in pineapple should return false.
@@ -109,29 +120,27 @@ function validateWordFromSelectedCells(cells){
 
     
     const selectedStartPos = cells[0]
-    // Check if a word starts at selected position
-
 
 
       // return true
 
-      // does wordLocations have a row and cell that match start pos?
-      const foundWord = wordLocations.current.filter((word)=>{
-        return word.row === selectedStartPos.row && word.cell === selectedStartPos.cell
+      //does wordLocations have a word that matches the selectedLetters
+      const foundWord = wordLocations.current.find((word)=>{
+        return word.insertedWord === lettersSelected || word.insertedWord === reversedLetters
       })
+      if(!foundWord) return false
 
-      if(foundWord.length === 0) return false
-      // does the length of cells match the length of the found word?
-      if(foundWord[0].insertedWord.length !== cells.length) return false
+      // does the found word have a row and cell that match start pos?
+      if(!foundWord.row === selectedStartPos.row && foundWord.cell === selectedStartPos.cell) return false
 
       // does the selectedstartpos direction match the found word's direction?
-      if(selectedStartPos.direction !== foundWord[0].dir) return false
+      if(!selectedStartPos.direction === foundWord.dir) return false
 
 
   //Finally, remove the found word from the words remaining
   setWordsRemaining((prev)=>{
     return prev.filter((prevWord)=>{
-      return prevWord.id !== foundWord[0].id
+      return prevWord.id !== foundWord.id
     })
   })
 
@@ -443,6 +452,7 @@ function addRandomLetters(){
 }
 
 function getRandomLetter(){
+  return " "
   return alphabet[Math.floor(Math.random()*alphabet.length)];
   }
 
