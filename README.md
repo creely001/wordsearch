@@ -1,6 +1,8 @@
+
 ## Wordsearch
 
 ### When building todo lists just won't do...
+
 <br/>
 
 Fully customisable and dynamic. Options include:
@@ -9,4 +11,4 @@ Fully customisable and dynamic. Options include:
 - Grid size (Total columns/cells)
 - Words/Themes
 
-Deployment coming soon..
+[Preview](https://62038b1b9e6edb00590afbdf--eloquent-einstein-480905.netlify.app/)
