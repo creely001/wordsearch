@@ -20,14 +20,15 @@ const wordList = [{name: "Fruits", words: fruits},{name: "Vegetables", words: ve
 
 export default function Home() {
 
-const chosenList = wordList[Math.floor(Math.random() * wordList.length)] //Regenerated everytime
-const title = chosenList.name
+  const chosenList = wordList[Math.floor(Math.random() * wordList.length)] //Regenerated everytime
+
 const {letters, wordLocations, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected, regenerateGrid, loaded} = useWordSearchGrid(gridCellCount, gridColumnCount, chosenList.words);
 
 
 useEffect(() => {
   
   setWordsRemaining(wordLocations)
+
 
 }, [letters]);
 
@@ -45,7 +46,7 @@ if(!loaded){
 
       <main className={styles.main}>
 
-      <h1>{title}</h1>
+      <h1>Wordsearch</h1>
 
         <div className={styles.grid}>
           <table className="box"> 
