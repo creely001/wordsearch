@@ -7,8 +7,6 @@ function handleSelect(e){
     onSelectChange(e.target.value);
 }
 
-console.log(selected)
-
 
 
 return <select defaultValue={selected} onChange={handleSelect}>

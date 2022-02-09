@@ -23,7 +23,6 @@ function handleSelectChange(value){
 
 
 function getWords(){
-
   const arr = []
   for(let i = 0; i < maxWords; i++){
     const word = chosenList.current.words[Math.floor(Math.random() * chosenList.current.words.length)]
@@ -136,12 +135,15 @@ function validateWordFromSelectedCells(cells){
       })
       if(!foundWord) return false
 
+
       // does the found word have a row and cell that match start pos?
-      if(!foundWord.row === selectedStartPos.row && foundWord.cell === selectedStartPos.cell) return false
+      if(foundWord.row !== selectedStartPos.row && foundWord.cell !== selectedStartPos.cell) return false
+
 
       // does the selectedstartpos direction match the found word's direction?
-      if(!selectedStartPos.direction === foundWord.dir) return false
+      if(selectedStartPos.direction !== foundWord.dir) return false
 
+      
 
   //Finally, remove the found word from the words remaining
   setWordsRemaining((prev)=>{
