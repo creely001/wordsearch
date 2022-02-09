@@ -48,7 +48,7 @@ if(!loaded){
 
       <main className={styles.main}>
 
-<div class="header">
+<div className="header">
 <h1>{chosenList.current.name}</h1>
 <Dropdown onSelectChange={handleSelectChange} selected={chosenList.current.name}/>
 
