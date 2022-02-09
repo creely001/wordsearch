@@ -8,8 +8,31 @@ import styles from '../styles/Home.module.css'
 
 const gridCellCount = 100;
 const gridColumnCount = 10;
-const words = ["APPLE", "BANANA", "MANGO", "KIWI", "ORANGE", "PEAR", "STRAWBERRY", "MELON", "GRAPE", "PINEAPPLE"];
 
+const maxWords = Math.floor(gridCellCount / 10);
+const maxChars = Math.floor(gridCellCount/100*60)
+
+
+const wordList = ["APPLE", "BANANA", "MANGO", "KIWI", "ORANGE", "PEAR", "STRAWBERRY", "MELON", "GRAPE", "PINEAPPLE", "APRICOT", "ELDERBERRY", "DAMSON", "PLUM", "SULTANA", "BLUEBERRY", "GRAPEFRUIT", "DRAGFRUIT", "KUMQUAT", "LIME", "LEMON", "RASPBERRY", "BLACKBERRY", "RHUBARB", "WATERMELON", "TOMATO"]
+
+let words = getWords();
+
+function getWords(){
+
+
+  const arr = []
+  for(let i = 0; i < maxWords; i++){
+    const word = wordList[Math.floor(Math.random() * wordList.length)]
+    if(!arr.includes(word)){
+      arr.push(word)
+    }
+  }
+
+  if(arr.join("").length <= maxChars && arr.length === maxWords) {
+    return arr
+  }
+  return getWords()
+}
 
 
 export default function Home() {
