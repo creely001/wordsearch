@@ -14,209 +14,13 @@ const words = ["APPLE", "BANANA", "MANGO", "KIWI", "ORANGE", "PEAR", "STRAWBERRY
 
 export default function Home() {
 
-const {letters} = useWordSearchGrid(gridCellCount, gridColumnCount, words);
+const {letters, wordLocations, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected, regenerateGrid} = useWordSearchGrid(gridCellCount, gridColumnCount, words);
 
-const selectedCellsRef = useRef([])
-const [selectedCells, setSelectedCells] = useState([])
-const [completedCells, setCompletedCells] = useState([])
-const [wordsRemaining, setWordsRemaining] = useState(words);
-
-function handleCellSelected(e,row,cell){
-
-  const gridPos = {
-    row,
-    cell
-  } 
-
-  selectedCellsRef.current  = [...selectedCellsRef.current, gridPos]
-  setSelectedCells(selectedCellsRef.current)
-  if(selectedCellsRef.current.length >= 2){
-    const selectedCells = validateCellSelection(selectedCellsRef.current)
-    if(!selectedCells){
-      setSelectedCells([])
-      selectedCellsRef.current = []
-      return;
-    };
-    const isWord = validateWordFromSelectedCells(selectedCells)
-    if(isWord){
-      setCompletedCells((prev)=>{
-        return [...prev, ...selectedCells]
-      })
-
-    }
-    setSelectedCells(selectedCells)
-    setTimeout(() => {
-      setSelectedCells([])
-    }, 200);
-    selectedCellsRef.current = []
-
-  }
-}
-
-
-function validateWordFromSelectedCells(cells){
-  const word = cells.map((cell)=>{
-    return cell.letter;
-  }).join("")
-  const reversedWord = word.split("").reverse().join("")
-  if(!words.includes(word) || words.includes(reversedWord)) return false;
+useEffect(() => {
   
-  setWordsRemaining((prev)=>{
-    return prev.filter((prevWord)=>{
-      return prevWord !== word
-    })    
-  })
-
-  return true;
-}
-
-
-function validateCellSelection(selection){
-  const startPos = {
-    row: selection[0].row, 
-    cell: selection[0].cell}
-  const endPos = {
-    row: selection[1].row,
-    cell: selection[1].cell}
-  const vector = {
-    row:endPos.row - startPos.row,
-    cell:endPos.cell - startPos.cell
-  }
-  if(!getDirection(vector)){
-    console.log("Invalid Selection")
-    return;
-  }
-  const arr = getSelectedCells(((Math.max(Math.abs(vector.row), Math.abs(vector.cell))) + 1),startPos.row,startPos.cell,getDirection(vector))
-  return arr
+  setWordsRemaining(wordLocations)
   
-}
-
-function getDirection(vector){
-
-  if(vector.row === 0){
-    if(vector.cell > 0) return "HORIZONTAL_POS"
-    if(vector.cell < 0) return "HORIZONTAL_NEG"
-  }
-  if(vector.cell === 0){
-    if(vector.row > 0) return "VERTICAL_POS"
-    if(vector.row < 0) return "VERTICAL_NEG"
-  }
-  if(vector.row > 0){
-    if(Math.abs(vector.row) !== Math.abs(vector.cell)) return;
-    if(vector.cell > 0) return "DIAGONAL_DOWN_POS"
-    if(vector.cell < 0) return "DIAGONAL_DOWN_NEG"
-  }
-  if(vector.row < 0){
-    if(Math.abs(vector.row) !== Math.abs(vector.cell)) return;
-    if(vector.cell > 0) return "DIAGONAL_UP_POS"
-    if(vector.cell < 0) return "DIAGONAL_UP_NEG"
-  }
-  else {
-    return
-  }
-
-}
-
-function handleClick(){
-  window.location.reload();
-}
-
-function getSelectedCells(count, row, cell, dir){
-
-//Takes in the length required, and the position to start at, as well as the direction,
-//Returns the total cells that will be selected.
-
-  const cells = []
-  switch(dir){
-    case "HORIZONTAL_POS":
-      for(let i = 0; i < count; i++){
-        cells.push({
-  direction: dir,          
-          letter: letters[row][cell+i],
-          row: row,
-          cell: cell+i
-        })
-      } 
-      break;
-      case "HORIZONTAL_NEG":
-        for(let i = 0; i < count; i++){
-          cells.push({
-            direction: dir,
-            letter: letters[row][cell-i],
-            row: row,
-            cell: cell-i
-          })
-        } 
-        break;
-    case "VERTICAL_POS":
-      for(let i = 0; i < count; i++){
-        cells.push({
-          direction: dir,
-          letter: letters[row+i][cell],
-          row: row+i,
-          cell: cell
-        })
-      } 
-      break;
-      case "VERTICAL_NEG":
-        for(let i = 0; i < count; i++){
-          cells.push({
-            direction: dir,
-            letter: letters[row-i][cell],
-            row: row-i,
-            cell: cell
-          })
-        } 
-        break;
-    case "DIAGONAL_UP_NEG":
-                    //Handle word placement if diagonal up left 
-      for(let i = 0; i < count; i++){
-        cells.push({
-          direction: dir,
-          letter: letters[row-i][cell-i],
-          row: row-i,
-          cell: cell-i
-        })
-      } 
-      break;
-    case "DIAGONAL_UP_POS":
-              //Handle word placement if diagonal up right 
-              for(let i = 0; i < count; i++){
-                cells.push({
-                  direction: dir,
-                  letter: letters[row-i][cell+i],
-                  row: row-i,
-                  cell: cell+i
-                })
-              } 
-              break;
-  
-      case "DIAGONAL_DOWN_NEG":
-        //Handle word placement if diagonal down left 
-        for(let i = 0; i < count; i++){
-          cells.push({
-            direction: dir,
-            letter: letters[row+i][cell-i],
-            row: row+i,
-            cell: cell-i
-          })
-        } 
-        break;
-      case "DIAGONAL_DOWN_POS":
-        //Handle word placement if diagonal down right 
-        for(let i = 0; i < count; i++){
-          cells.push({
-              direction: dir,
-            letter: letters[row+i][cell+i],
-            row: row+i,
-            cell: cell+i
-          })
-        } 
-        break;
-  }
-  return cells
-  }
-
+}, [letters]);
 
 
   return (
@@ -237,7 +41,7 @@ function getSelectedCells(count, row, cell, dir){
 
           {letters.map((arr, index)=>{    
 
-            return <Row key={Math.random()} selectedCells={selectedCells} completedCells={completedCells} cells={arr} row={index} onSelect={handleCellSelected}/>
+            return <Row key={Math.random()} selectedCells={selectedCells} completedCells={completedCells} cells={arr} row={index} onSelect={onCellSelected}/>
 
           })}
 
@@ -249,13 +53,13 @@ function getSelectedCells(count, row, cell, dir){
 
         </div>
         <div style={{"display": "flex", "gap": "2em"}}>
-            {words.map((word, index)=>{
-              return <h4 key={index} style={!wordsRemaining.includes(word) ? {"textDecoration": "line-through", "textDecorationThickness": "3px"} : {}}>{word}</h4>
+            {wordLocations.map((word, index)=>{
+              return <h4 key={index} style={!wordsRemaining.find(remainingWord => remainingWord.id === word.id) ? {"textDecoration": "line-through", "textDecorationThickness": "3px"} : {}}>{word.insertedWord}</h4>
             })}
           </div>
 
           {wordsRemaining.length === 0 ? <p>All words found!</p> : <p></p>}
-        <button onClick={handleClick}>Restart</button>
+        <button onClick={regenerateGrid}>Restart</button>
 
       </main>
 

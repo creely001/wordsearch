@@ -34,7 +34,7 @@ td{
   border: solid black 2px;
   width: 60px;
   height: 60px;
-
+  user-select: none;
 }
 
 td{

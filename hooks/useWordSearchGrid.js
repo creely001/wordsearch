@@ -12,7 +12,249 @@ const chars = words.join("").length;
 
 
 const [letters, setLetters] = useState([]);
+const wordsToInsert = useRef(words.map((word, index)=>{
+  return {
+    word,
+    index
+  }
+}))
+const wordLocations = useRef([])
 const usedWords = useRef([])
+
+const selectedCellsRef = useRef([]) 
+const [selectedCells, setSelectedCells] = useState([])
+const [completedCells, setCompletedCells] = useState([])
+const [wordsRemaining, setWordsRemaining] = useState(wordLocations);
+
+
+function handleRegenerateGrid(){
+  regenerateGrid();
+  setSelectedCells([])
+  setCompletedCells([])
+  setWordsRemaining(wordLocations)
+}
+
+function handleCellSelected(e,row,cell){
+
+  const gridPos = {
+    row,
+    cell
+  } 
+
+  selectedCellsRef.current  = [...selectedCellsRef.current, gridPos]
+  setSelectedCells(selectedCellsRef.current)
+  if(selectedCellsRef.current.length >= 2){
+    const selectedCells = validateCellSelection(selectedCellsRef.current)
+    if(!selectedCells){
+      setSelectedCells([])
+      selectedCellsRef.current = []
+      return;
+    };
+    const isWord = validateWordFromSelectedCells(selectedCells)
+    if(isWord){
+      setCompletedCells((prev)=>{
+        return [...prev, ...selectedCells]
+      })
+
+    }
+    setSelectedCells(selectedCells)
+    setTimeout(() => {
+      setSelectedCells([])
+    }, 200);
+    selectedCellsRef.current = []
+
+  }
+}
+
+
+
+function validateWordFromSelectedCells(cells){
+  const words = wordLocations.current.map((word)=>{
+    return word.insertedWord
+  })
+  const lettersSelected = cells.map((cell)=>{
+    return cell.letter;
+  }).join("")
+  const reversedLetters = lettersSelected.split("").reverse().join("")
+  if(!words.includes(lettersSelected) || words.includes(reversedLetters)) return false;
+
+
+  // check word is "complete" and not just part of another word e.g apple in pineapple should return false.
+    // Each word should have an object attached corresponding to its id coordinates in the grid
+
+    
+    const selectedStartPos = cells[0]
+    // Check if a word starts at selected position
+
+
+
+      // return true
+
+      // does wordLocations have a row and cell that match start pos?
+      const foundWord = wordLocations.current.filter((word)=>{
+        return word.row === selectedStartPos.row && word.cell === selectedStartPos.cell
+      })
+
+      if(foundWord.length === 0) return false
+      // does the length of cells match the length of the found word?
+      if(foundWord[0].insertedWord.length !== cells.length) return false
+
+      // does the selectedstartpos direction match the found word's direction?
+      if(selectedStartPos.direction !== foundWord[0].dir) return false
+
+
+  //Finally, remove the found word from the words remaining
+  setWordsRemaining((prev)=>{
+    return prev.filter((prevWord)=>{
+      return prevWord.id !== foundWord[0].id
+    })
+  })
+
+  return true;
+}
+
+
+function validateCellSelection(selection){
+  const startPos = {
+    row: selection[0].row, 
+    cell: selection[0].cell}
+  const endPos = {
+    row: selection[1].row,
+    cell: selection[1].cell}
+  const vector = {
+    row:endPos.row - startPos.row,
+    cell:endPos.cell - startPos.cell
+  }
+  if(!getDirection(vector)){
+    return;
+  }
+  const arr = getSelectedCells(((Math.max(Math.abs(vector.row), Math.abs(vector.cell))) + 1),startPos.row,startPos.cell,getDirection(vector))
+  return arr
+  
+}
+
+function getDirection(vector){
+
+  if(vector.row === 0){
+    if(vector.cell > 0) return "HORIZONTAL_POS"
+    if(vector.cell < 0) return "HORIZONTAL_NEG"
+  }
+  if(vector.cell === 0){
+    if(vector.row > 0) return "VERTICAL_POS"
+    if(vector.row < 0) return "VERTICAL_NEG"
+  }
+  if(vector.row > 0){
+    if(Math.abs(vector.row) !== Math.abs(vector.cell)) return;
+    if(vector.cell > 0) return "DIAGONAL_DOWN_POS"
+    if(vector.cell < 0) return "DIAGONAL_DOWN_NEG"
+  }
+  if(vector.row < 0){
+    if(Math.abs(vector.row) !== Math.abs(vector.cell)) return;
+    if(vector.cell > 0) return "DIAGONAL_UP_POS"
+    if(vector.cell < 0) return "DIAGONAL_UP_NEG"
+  }
+  else {
+    return
+  }
+
+}
+
+
+function getSelectedCells(count, row, cell, dir){
+
+//Takes in the length required, and the position to start at, as well as the direction,
+//Returns the total cells that will be selected.
+
+  const cells = []
+  switch(dir){
+    case "HORIZONTAL_POS":
+      for(let i = 0; i < count; i++){
+        cells.push({
+  direction: dir,          
+          letter: letters[row][cell+i],
+          row: row,
+          cell: cell+i
+        })
+      } 
+      break;
+      case "HORIZONTAL_NEG":
+        for(let i = 0; i < count; i++){
+          cells.push({
+            direction: dir,
+            letter: letters[row][cell-i],
+            row: row,
+            cell: cell-i
+          })
+        } 
+        break;
+    case "VERTICAL_POS":
+      for(let i = 0; i < count; i++){
+        cells.push({
+          direction: dir,
+          letter: letters[row+i][cell],
+          row: row+i,
+          cell: cell
+        })
+      } 
+      break;
+      case "VERTICAL_NEG":
+        for(let i = 0; i < count; i++){
+          cells.push({
+            direction: dir,
+            letter: letters[row-i][cell],
+            row: row-i,
+            cell: cell
+          })
+        } 
+        break;
+    case "DIAGONAL_UP_NEG":
+                    //Handle word placement if diagonal up left 
+      for(let i = 0; i < count; i++){
+        cells.push({
+          direction: dir,
+          letter: letters[row-i][cell-i],
+          row: row-i,
+          cell: cell-i
+        })
+      } 
+      break;
+    case "DIAGONAL_UP_POS":
+              //Handle word placement if diagonal up right 
+              for(let i = 0; i < count; i++){
+                cells.push({
+                  direction: dir,
+                  letter: letters[row-i][cell+i],
+                  row: row-i,
+                  cell: cell+i
+                })
+              } 
+              break;
+  
+      case "DIAGONAL_DOWN_NEG":
+        //Handle word placement if diagonal down left 
+        for(let i = 0; i < count; i++){
+          cells.push({
+            direction: dir,
+            letter: letters[row+i][cell-i],
+            row: row+i,
+            cell: cell-i
+          })
+        } 
+        break;
+      case "DIAGONAL_DOWN_POS":
+        //Handle word placement if diagonal down right 
+        for(let i = 0; i < count; i++){
+          cells.push({
+              direction: dir,
+            letter: letters[row+i][cell+i],
+            row: row+i,
+            cell: cell+i
+          })
+        } 
+        break;
+  }
+  return cells
+  }
 
 useEffect(() => {
 
@@ -43,6 +285,8 @@ useEffect(() => {
 
 
 function findWordInsertLocation(wordToInsert){
+
+// Iterate through every cell in the grid and return a list of valid locations for the word to instantiate in, as well as its direction.
 const insertionPositions = letters.map((row, rowIndex)=>{
   return row.map((cell, cellIndex)=>{
     return {
@@ -103,6 +347,7 @@ initWord();
 }, [letters]);
 
 function regenerateGrid(){
+wordLocations.current = []
 usedWords.current = []
 setLetters(()=>{
         
@@ -110,7 +355,6 @@ setLetters(()=>{
   let arr = [];
   for(let i = 0; i < numCells; i++){
 
-    //arr.push(alphabet[Math.floor(Math.random() * alphabet.length)].toUpperCase())
     arr.push("")
     if(arr.length === columnCount) 
     {
@@ -125,12 +369,18 @@ setLetters(()=>{
 
 function getNextWord(){
 
-const unusedWords = words.filter((word)=>{
-  return !usedWords.current.includes(word)
+const unusedWordIndexArr = wordsToInsert.current.map((word)=>{
+  return word.index
+}).filter((wordIndex)=>{
+  return !usedWords.current.includes(wordIndex)
 })
-usedWords.current = [...usedWords.current, unusedWords[0]]
-if(unusedWords.length === 0) return null
-return unusedWords[0]
+if(unusedWordIndexArr.length === 0) return null
+usedWords.current = [...usedWords.current, unusedWordIndexArr[0]]
+
+return {
+  id: unusedWordIndexArr[0],
+  wordToInsert: wordsToInsert.current[unusedWordIndexArr[0]].word
+}
 
 }
 
@@ -163,13 +413,20 @@ function getRandomLetter(){
 function initWord(){
 
 
-    const wordToInsert = getNextWord();
-    if(wordToInsert === null) {
+    const word = getNextWord();
+
+
+    if(word === null) {
+      //After all words have been added, fill remaining cells with random letters
       console.log("All words added.")
-  
       return addRandomLetters() === null ? addRandomLetters() : null
 
     };
+
+    const wordToInsert = word.wordToInsert;
+    const id = word.id
+
+
 
     //Handle automatic generation of the grid. 
       // Once a word is chosen, loop through every available cell.
@@ -189,11 +446,17 @@ function initWord(){
   
       
     insertWord(wordToInsert, row, cell, dir)
-
+    const insertedWord = {
+     id, insertedWord: wordToInsert, row, cell, dir
+    }
+    wordLocations.current = [...wordLocations.current, insertedWord]
 
 }
 
+
 function insertWord(wordToInsert, row, cell, dir){
+
+
 
 switch(dir){
   case "HORIZONTAL_POS":
@@ -422,8 +685,7 @@ cellsToFill.forEach((item)=>{
     }
     else{
       lettersOverwritten++;
-
-      if(lettersOverwritten >= word.length){
+      if(lettersOverwritten >= word.length-1){
         validated = false;
       }
     }
@@ -532,6 +794,9 @@ function isCellSame(cell){
 return letters[cell.row][cell.cell] === cell.letter ? true : false;
 }
 
-return {letters}
+
+
+return {letters, wordLocations: wordLocations.current, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected: handleCellSelected, regenerateGrid: handleRegenerateGrid}
+
 
 }

@@ -26,10 +26,10 @@ function Row({cells, row, onSelect, selectedCells, completedCells}){
         HORIZONTAL_POS: "linear-gradient(0deg, transparent 45%, #1a8997 47%, #1a8997 53%, transparent 55%) 0",
         VERTICAL_POS: "linear-gradient(90deg, transparent 45%, #1a8997 47%, #1a8997 53%, transparent 55%) 0",
         VERTICAL_NEG: "linear-gradient(90deg, transparent 45%, #1a8997 47%, #1a8997 53%, transparent 55%) 0",
-        DIAGONAL_UP_NEG: "linear-gradient(45deg, transparent 45%, #1a8997 47%, #1a8997 53%, transparent 55%) 0",
-        DIAGONAL_UP_POS: "linear-gradient(135deg, transparent 45%, #1a8997 47%, #1a8997 53%, transparent 55%) 0",
-        DIAGONAL_DOWN_NEG: "linear-gradient(135deg, transparent 45%, #1a8997 47%, #1a8997 53%, transparent 55%) 0",
-        DIAGONAL_DOWN_POS: "linear-gradient(45deg, transparent 45%, #1a8997 47%, #1a8997 53%, transparent 55%) 0"
+        DIAGONAL_UP_NEG: "linear-gradient(45deg, transparent 46%, #1a8997 48%, #1a8997 52%, transparent 54%) 0",
+        DIAGONAL_UP_POS: "linear-gradient(135deg, transparent 46%, #1a8997 48%, #1a8997 52%, transparent 54%) 0",
+        DIAGONAL_DOWN_NEG: "linear-gradient(135deg, transparent 46%, #1a8997 48%, #1a8997 52%, transparent 54%) 0",
+        DIAGONAL_DOWN_POS: "linear-gradient(45deg, transparent 46%, #1a8997 48%, #1a8997 52%, transparent 54%) 0"
    }
 
    function getLineDirections(index){
