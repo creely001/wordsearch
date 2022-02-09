@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 
-export default function useWordSearchGrid(numCells, columnCount, words){
+export default function useWordSearchGrid(numCells, columnCount, wordList){
+
 
 
 
@@ -8,11 +9,31 @@ export default function useWordSearchGrid(numCells, columnCount, words){
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const maxWords = Math.floor(numCells / 10);
 const maxChars = Math.floor(numCells/100*60)
-const chars = words.join("").length;
 
+
+  
+function getWords(){
+
+  const arr = []
+  for(let i = 0; i < maxWords; i++){
+    const word = wordList[Math.floor(Math.random() * wordList.length)]
+    if(!arr.includes(word)){
+      arr.push(word)
+    }
+  }
+
+  if(arr.join("").length <= maxChars && arr.length === maxWords) {
+    return arr
+  }
+  return getWords()
+}
+
+const words = useRef(getWords())
+
+const chars = words.current.join("").length;
 
 const [letters, setLetters] = useState([]);
-const wordsToInsert = useRef(words.map((word, index)=>{
+const wordsToInsert = useRef(words.current.map((word, index)=>{
   return {
     word,
     index
@@ -29,11 +50,13 @@ const [loaded, setLoaded] = useState(false)
 
 
 function handleRegenerateGrid(){
+  setLoaded(false)
   regenerateGrid();
   setSelectedCells([])
   setCompletedCells([])
-  setWordsRemaining(wordLocations)
-  setLoaded(false)
+  setWordsRemaining([])
+  words.current = getWords();
+
 }
 
 function handleCellSelected(e,row,cell){
@@ -343,6 +366,12 @@ if(words.length > maxWords){
   console.log(`Too many words to add. Maximum is ${maxWords}, current is ${words.length}.`);
   return;
 }
+wordsToInsert.current = words.current.map((word, index)=>{
+  return {
+    word,
+    index
+  }
+})
 
   initWord();
 

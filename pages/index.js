@@ -5,7 +5,6 @@ import useWordSearchGrid from '../hooks/useWordSearchGrid';
 import {useRef, useState, useEffect} from 'react'
 import styles from '../styles/Home.module.css'
 
-
 const gridCellCount = 100;
 const gridColumnCount = 10;
 
@@ -15,34 +14,16 @@ const maxChars = Math.floor(gridCellCount/100*60)
 
 const wordList = ["APPLE", "BANANA", "MANGO", "KIWI", "ORANGE", "PEAR", "STRAWBERRY", "MELON", "GRAPE", "PINEAPPLE", "APRICOT", "ELDERBERRY", "DAMSON", "PLUM", "SULTANA", "BLUEBERRY", "GRAPEFRUIT", "DRAGFRUIT", "KUMQUAT", "LIME", "LEMON", "RASPBERRY", "BLACKBERRY", "RHUBARB", "WATERMELON", "TOMATO"]
 
-let words = getWords();
-
-function getWords(){
-
-
-  const arr = []
-  for(let i = 0; i < maxWords; i++){
-    const word = wordList[Math.floor(Math.random() * wordList.length)]
-    if(!arr.includes(word)){
-      arr.push(word)
-    }
-  }
-
-  if(arr.join("").length <= maxChars && arr.length === maxWords) {
-    return arr
-  }
-  return getWords()
-}
 
 
 export default function Home() {
 
-const {letters, wordLocations, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected, regenerateGrid, loaded} = useWordSearchGrid(gridCellCount, gridColumnCount, words);
+const {letters, wordLocations, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected, regenerateGrid, loaded} = useWordSearchGrid(gridCellCount, gridColumnCount, wordList);
 
 useEffect(() => {
   
   setWordsRemaining(wordLocations)
- 
+
 }, [letters]);
 
 
@@ -85,7 +66,9 @@ if(!loaded){
           </div>
 
           {wordsRemaining.length === 0 ? <p>All words found!</p> : <p></p>}
-        <button onClick={regenerateGrid}>Restart</button>
+        <button onClick={()=>{
+          regenerateGrid();
+        }}>Restart</button>
 
       </main>
 
