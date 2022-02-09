@@ -14,8 +14,6 @@ const maxChars = Math.floor(numCells/100*60)
   
 function getWords(){
 
-  return ["MANGO", "MELON", "MARGE", "MARCO", "MAOAM", "MERCY", "MOON"]
-
   const arr = []
   for(let i = 0; i < maxWords; i++){
     const word = wordList[Math.floor(Math.random() * wordList.length)]
