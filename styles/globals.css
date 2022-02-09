@@ -34,6 +34,14 @@ td{
   width: 35px;
 }
 
+.header{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+margin-bottom: 1em;
+}
+
 .words{
   display:flex;
   justify-content: center;

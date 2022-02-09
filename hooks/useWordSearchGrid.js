@@ -6,17 +6,27 @@ export default function useWordSearchGrid(numCells, columnCount, wordList){
 
 
 
+const chosenList = useRef(wordList[0])
+
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const maxWords = Math.floor(numCells / 10);
 const maxChars = Math.floor(numCells/100*60)
 
 
-  
+function handleSelectChange(value){
+  chosenList.current = wordList.find((list)=>{
+    return list.name === value
+  })
+  handleRegenerateGrid()
+}
+
+
+
 function getWords(){
 
   const arr = []
   for(let i = 0; i < maxWords; i++){
-    const word = wordList[Math.floor(Math.random() * wordList.length)]
+    const word = chosenList.current.words[Math.floor(Math.random() * chosenList.current.words.length)]
     if(!arr.includes(word)){
       arr.push(word)
     }
@@ -97,13 +107,11 @@ function validateWordFromSelectedCells(cells){
   const words = wordLocations.current.map((word)=>{
     return word.insertedWord
   })
-  console.log(words)
   const lettersSelected = cells.map((cell)=>{
     return cell.letter;
   }).join("")
   const reversedLetters = lettersSelected.split("").reverse().join("")
 
-  console.log(lettersSelected, reversedLetters)
   if(!words.includes(lettersSelected)){
 
     if(!words.includes(reversedLetters)){
@@ -841,7 +849,7 @@ return letters[cell.row][cell.cell] === cell.letter ? true : false;
 
 
 
-return {letters, wordLocations: wordLocations.current, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected: handleCellSelected, regenerateGrid: handleRegenerateGrid, loaded}
+return {letters, wordLocations: wordLocations.current, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected: handleCellSelected, regenerateGrid: handleRegenerateGrid, handleSelectChange, chosenList, loaded}
 
 
 }
