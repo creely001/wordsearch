@@ -4,6 +4,8 @@ import {useEffect} from 'react'
 import Row from './Row'
 import Dropdown from './Dropdown';
 import Grid from './Grid'
+import WordsearchHeader from './WordsearchHeader';
+import WordsearchFooter from './WordsearchFooter';
 
 const gridCellCount = 100;
 const gridColumnCount = 10;
@@ -33,39 +35,13 @@ if(!loaded){
         return <div></div>
 }
     return <div className={styles.main} >
-    <div className="header">
-    <h1>{chosenList.current.name}</h1>
-    <Dropdown onSelectChange={handleSelectChange} selected={chosenList.current.name}/>
 
-    </div>
+    <WordsearchHeader chosenList={chosenList} handleSelectChange={handleSelectChange}/>
 
+    <Grid grid={letters} selectedCells={selectedCells} completedCells={completedCells} onSelect={onCellSelected} />
 
-    <div className={styles.grid}>
-    <table className="box"> 
-    <tbody>
+    <WordsearchFooter wordLocations={wordLocations} wordsRemaining={wordsRemaining} onRegenerateGrid={regenerateGrid}/>
 
-    {letters.map((arr, index)=>{    
-
-      return <Row key={Math.random()} selectedCells={selectedCells} completedCells={completedCells} cells={arr} row={index} onSelect={onCellSelected}/>
-
-    })}
-
-    </tbody>
-    </table>
-
-
-
-</div>
-
-<div className="words">
-            {wordLocations.map((word, index)=>{
-              return <h4 key={index} style={!wordsRemaining.find(remainingWord => remainingWord.id === word.id) ? {"textDecoration": "line-through", "textDecorationThickness": "3px"} : {}}>{word.insertedWord}</h4>
-            })}
-          </div>
-
-          {wordsRemaining.length === 0 ? <p>All words found!</p> : <p></p>}
-        <button onClick={()=>{
-          regenerateGrid();
-        }}>Restart</button>
+        
   </div>
 }
