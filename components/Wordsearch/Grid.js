@@ -1,5 +1,5 @@
 import Row from './Row'
-import styles from '../styles/Home.module.css'
+import styles from '../../styles/Home.module.css'
 
 export default function Grid({grid, selectedCells, completedCells, onSelect}){
 

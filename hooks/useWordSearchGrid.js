@@ -1,16 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 
-export default function useWordSearchGrid(numCells, columnCount, wordList){
-
-
-
-
+export default function useWordSearchGrid(gridSize, wordList){
 
 const chosenList = useRef(wordList[0])
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-const maxWords = Math.floor(numCells / 10);
-const maxChars = Math.floor(numCells/100*60)
+
+    // TODO: Set min/max grid size cap here...
+
+const maxWords = gridSize;
+const numCells = gridSize * gridSize;
+const maxChars = Math.floor((numCells/100)*70) //% of total cells in grid
+const maxWordLength = gridSize;
 
 
 function handleSelectChange(value){
@@ -20,28 +21,34 @@ function handleSelectChange(value){
   handleRegenerateGrid()
 }
 
+function shuffleArray(arr){
 
+return arr.sort(() => Math.random() - 0.5);
+
+}
 
 function getWords(){
-  const arr = []
-  for(let i = 0; i < maxWords; i++){
-    const word = chosenList.current.words[Math.floor(Math.random() * chosenList.current.words.length)]
-    if(!arr.includes(word)){
-      arr.push(word)
-    }
-  }
 
-  if(arr.join("").length <= maxChars && arr.length === maxWords) {
-    return arr
+  const shuffledWordList = shuffleArray(chosenList.current.words);
+  const wordsToBeInserted = []
+  let i = 0;
+  while(wordsToBeInserted.length < maxWords){
+    const word = shuffledWordList[i]
+    if (!wordsToBeInserted.includes(word) && word.length <= maxWordLength){
+      wordsToBeInserted.push(word);
+    }
+    i++;
   }
-  return getWords()
+  if(wordsToBeInserted.join("").length <= maxChars) return wordsToBeInserted;
+  return getWords();
+
 }
 
 const words = useRef(getWords())
 
 const chars = words.current.join("").length;
 
-const [letters, setLetters] = useState([]);
+const [grid, setGrid] = useState([]);
 const wordsToInsert = useRef(words.current.map((word, index)=>{
   return {
     word,
@@ -213,7 +220,7 @@ function getSelectedCells(count, row, cell, dir){
       for(let i = 0; i < count; i++){
         cells.push({
   direction: dir,          
-          letter: letters[row][cell+i],
+          letter: grid[row][cell+i],
           row: row,
           cell: cell+i
         })
@@ -223,7 +230,7 @@ function getSelectedCells(count, row, cell, dir){
         for(let i = 0; i < count; i++){
           cells.push({
             direction: dir,
-            letter: letters[row][cell-i],
+            letter: grid[row][cell-i],
             row: row,
             cell: cell-i
           })
@@ -233,7 +240,7 @@ function getSelectedCells(count, row, cell, dir){
       for(let i = 0; i < count; i++){
         cells.push({
           direction: dir,
-          letter: letters[row+i][cell],
+          letter: grid[row+i][cell],
           row: row+i,
           cell: cell
         })
@@ -243,7 +250,7 @@ function getSelectedCells(count, row, cell, dir){
         for(let i = 0; i < count; i++){
           cells.push({
             direction: dir,
-            letter: letters[row-i][cell],
+            letter: grid[row-i][cell],
             row: row-i,
             cell: cell
           })
@@ -254,7 +261,7 @@ function getSelectedCells(count, row, cell, dir){
       for(let i = 0; i < count; i++){
         cells.push({
           direction: dir,
-          letter: letters[row-i][cell-i],
+          letter: grid[row-i][cell-i],
           row: row-i,
           cell: cell-i
         })
@@ -265,7 +272,7 @@ function getSelectedCells(count, row, cell, dir){
               for(let i = 0; i < count; i++){
                 cells.push({
                   direction: dir,
-                  letter: letters[row-i][cell+i],
+                  letter: grid[row-i][cell+i],
                   row: row-i,
                   cell: cell+i
                 })
@@ -277,7 +284,7 @@ function getSelectedCells(count, row, cell, dir){
         for(let i = 0; i < count; i++){
           cells.push({
             direction: dir,
-            letter: letters[row+i][cell-i],
+            letter: grid[row+i][cell-i],
             row: row+i,
             cell: cell-i
           })
@@ -288,7 +295,7 @@ function getSelectedCells(count, row, cell, dir){
         for(let i = 0; i < count; i++){
           cells.push({
               direction: dir,
-            letter: letters[row+i][cell+i],
+            letter: grid[row+i][cell+i],
             row: row+i,
             cell: cell+i
           })
@@ -298,38 +305,11 @@ function getSelectedCells(count, row, cell, dir){
   return cells
   }
 
-useEffect(() => {
-
-
-  setLetters(()=>{
-    
-    
-    const bigArr = [];
-    let arr = [];
-    for(let i = 0; i < numCells; i++){
-
-      //arr.push(alphabet[Math.floor(Math.random() * alphabet.length)].toUpperCase())
-      arr.push("")
-      if(arr.length === columnCount) 
-      {
-      bigArr.push(arr);
-      arr = [];
-      }
-
-    }
-    return bigArr;
-  })
-
-
-
-}, []);
-
-
 
 function findWordInsertLocation(wordToInsert){
 
 // Iterate through every cell in the grid and return a list of valid locations for the word to instantiate in, as well as its direction.
-const insertionPositions = letters.map((row, rowIndex)=>{
+const insertionPositions = grid.map((row, rowIndex)=>{
   return row.map((cell, cellIndex)=>{
     return {
       row: rowIndex,
@@ -394,27 +374,30 @@ wordsToInsert.current = words.current.map((word, index)=>{
 
 
 
-}, [letters]);
+}, [grid]);
 
 function regenerateGrid(){
 wordLocations.current = []
 usedWords.current = []
-setLetters(()=>{
+setGrid(()=>{
         
-  const bigArr = [];
-  let arr = [];
+  const entireGrid = [];
+  let gridRow = [];
   for(let i = 0; i < numCells; i++){
 
-    arr.push("")
-    if(arr.length === columnCount) 
+    gridRow.push("")
+    if(gridRow.length === gridSize) 
     {
-    bigArr.push(arr);
-    arr = [];
+      entireGrid.push(gridRow);
+      gridRow = [];
     }
 
   }
-  return bigArr;
+  
+  return entireGrid;
 })
+
+
 }
 
 function getNextWord(){
@@ -436,7 +419,7 @@ return {
 
 function addRandomLetters(){
 
-  const remainingCells = letters.map((row)=>{
+  const remainingCells = grid.map((row)=>{
     return row.filter((cell)=>{
       return cell === ""
     })
@@ -449,7 +432,7 @@ function addRandomLetters(){
     return null
   }
 
- setLetters((prev) => {
+ setGrid((prev) => {
   return prev.map((row)=>{
     return row.map((cell)=>{
       return cell || getRandomLetter()
@@ -460,7 +443,6 @@ function addRandomLetters(){
 }
 
 function getRandomLetter(){
-  return " "
   return alphabet[Math.floor(Math.random()*alphabet.length)];
   }
 
@@ -519,7 +501,7 @@ switch(dir){
 
       
       for(let i = 0; i < wordToInsert.length; i++){
-      setLetters((prev)=>{
+      setGrid((prev)=>{
         return ([...prev.slice(0,row), [...prev[row].slice(0,cell+i), wordToInsert[i], ...prev[row].slice(cell+1+i)], ...prev.slice(row+1)])
       })
     }
@@ -529,7 +511,7 @@ switch(dir){
       //Handle word placement if horizontal  
 
       for(let i = 0; i < wordToInsert.length; i++){
-      setLetters((prev)=>{
+      setGrid((prev)=>{
         return ([...prev.slice(0,row), [...prev[row].slice(0,cell-i), wordToInsert[i], ...prev[row].slice(cell+1-i)], ...prev.slice(row+1)])
       })
     }
@@ -541,7 +523,7 @@ switch(dir){
       //Place letters vertically
       //Slice each row and replace one cell for every letter.
       for(let i = 0; i < wordToInsert.length; i++){
-        setLetters((prev)=>{
+        setGrid((prev)=>{
      
           return ([...prev.slice(0,row+i), [...prev[row+i].slice(0,cell), wordToInsert[i], ...prev[row+i].slice(cell+1)], ...prev.slice(row+1+i)])
 
@@ -553,7 +535,7 @@ switch(dir){
       //Place letters vertically
       //Slice each row and replace one cell for every letter.
       for(let i = 0; i < wordToInsert.length; i++){
-        setLetters((prev)=>{
+        setGrid((prev)=>{
      
           return ([...prev.slice(0,row-i), [...prev[row-i].slice(0,cell), wordToInsert[i], ...prev[row-i].slice(cell+1)], ...prev.slice(row+1-i)])
 
@@ -564,7 +546,7 @@ switch(dir){
       //Handle word placement if diagonal up left 
       //Slice each row and replace one cell for every letter. Decrement row, decrement cell.
       for(let i = 0; i < wordToInsert.length; i++){
-        setLetters((prev)=>{
+        setGrid((prev)=>{
      
           return ([...prev.slice(0,row-i), [...prev[row-i].slice(0,cell-i), wordToInsert[i], ...prev[row-i].slice(cell+1-i)], ...prev.slice(row+1-i)])
 
@@ -577,7 +559,7 @@ switch(dir){
       //Handle word placement if diagonal up right
         //Slice each row and replace one cell for every letter. Decrement row, increment cell.
         for(let i = 0; i < wordToInsert.length; i++){
-          setLetters((prev)=>{
+          setGrid((prev)=>{
        
             return ([...prev.slice(0,row-i), [...prev[row-i].slice(0,cell+i), wordToInsert[i], ...prev[row-i].slice(cell+1+i)], ...prev.slice(row+1-i)])
 
@@ -591,7 +573,7 @@ switch(dir){
       //Place letters diagonally right
       //Slice each row and replace one cell for every letter. Increment both cell and row.
       for(let i = 0; i < wordToInsert.length; i++){
-        setLetters((prev)=>{
+        setGrid((prev)=>{
      
           return ([...prev.slice(0,row+i), [...prev[row+i].slice(0,cell-i), wordToInsert[i], ...prev[row+i].slice(cell+1-i)], ...prev.slice(row+1+i)])
 
@@ -604,7 +586,7 @@ switch(dir){
       //Place letters diagonally right
       //Slice each row and replace one cell for every letter. Increment both cell and row.
       for(let i = 0; i < wordToInsert.length; i++){
-        setLetters((prev)=>{
+        setGrid((prev)=>{
      
           return ([...prev.slice(0,row+i), [...prev[row+i].slice(0,cell+i), wordToInsert[i], ...prev[row+i].slice(cell+1+i)], ...prev.slice(row+1+i)])
 
@@ -620,8 +602,8 @@ switch(dir){
 
 function checkWordFits(word, row, cell, dir){
 
-const rowCount = letters.length; //The amount of rows in the grid..
-const rowLength = letters[row].length; //How many cells this row has..
+const rowCount = grid.length; //The amount of rows in the grid..
+const rowLength = grid[row].length; //How many cells this row has..
 let sum;
 
 switch(dir){
@@ -842,17 +824,17 @@ return cells
 
 function isCellEmpty(cell){
 
-return letters[cell.row][cell.cell] === "" ? true : false;
+return grid[cell.row][cell.cell] === "" ? true : false;
 }
 
 function isCellSame(cell){
-return letters[cell.row][cell.cell] === cell.letter ? true : false;
+return grid[cell.row][cell.cell] === cell.letter ? true : false;
 }
 
 
 
 
-return {letters, wordLocations: wordLocations.current, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected: handleCellSelected, regenerateGrid: handleRegenerateGrid, handleSelectChange, chosenList, loaded}
+return {grid, wordLocations: wordLocations.current, wordsRemaining, setWordsRemaining, selectedCells, completedCells, onCellSelected: handleCellSelected, regenerateGrid: handleRegenerateGrid, handleSelectChange, chosenList, loaded}
 
 
 }
