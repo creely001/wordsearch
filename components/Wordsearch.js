@@ -1,5 +1,5 @@
 import styles from '../styles/Home.module.css'
-import useWordSearchGrid from '../hooks/useWordSearchGrid';
+import useWordSearch from '../hooks/useWordSearch';
 import {useEffect} from 'react'
 import Grid from './Wordsearch/Grid'
 import WordsearchHeader from './Wordsearch/WordsearchHeader';
@@ -21,34 +21,47 @@ const wordList = [
 export default function Wordsearch(){
 
     const {
+      handleDropdownChange, 
+      chosenList,
+
        grid,
+       handleRegenerateGrid, 
        wordLocations, 
+
        wordsRemaining, 
        setWordsRemaining, 
+
        selectedCells, 
        completedCells, 
-       onCellSelected, 
-       regenerateGrid, 
-       handleSelectChange, 
-       loaded, 
-       chosenList} = useWordSearchGrid(
+       handleCellSelected, 
+
+       loaded
+} = useWordSearch(
          gridSize, 
          wordList);
 
+    // word retrieval list handling
+    // grid generation/regeneration
+    // cell/word handling
+
+
     useEffect(() => {
-        setWordsRemaining(wordLocations)
-      }, [grid]);
+      setWordsRemaining(wordLocations)
+    }, [grid]);
+
+
+
 
 if(!loaded){
         return <div></div>
 }
     return <div className={styles.main} >
 
-    <WordsearchHeader chosenList={chosenList} handleSelectChange={handleSelectChange}/>
+    <WordsearchHeader chosenList={chosenList} handleSelectChange={handleDropdownChange}/>
 
-    <Grid grid={grid} selectedCells={selectedCells} completedCells={completedCells} onSelect={onCellSelected} />
+    <Grid grid={grid} selectedCells={selectedCells} completedCells={completedCells} onSelect={handleCellSelected} />
 
-    <WordsearchFooter wordLocations={wordLocations} wordsRemaining={wordsRemaining} onRegenerateGrid={regenerateGrid}/>
+    <WordsearchFooter wordLocations={wordLocations} wordsRemaining={wordsRemaining} onRegenerateGrid={handleRegenerateGrid}/>
 
         
   </div>
