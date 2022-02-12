@@ -6,16 +6,6 @@ import useWordSearchSelection from './useWordSearchSelection';
 export default function useWordSearch(gridSize, wordList){
 
   const debugMode = false;
-  const minGridSize = 6;
-  const maxGridSize = 20;
-
-
-
-    // TODO: Set min/max grid size cap here...
-    gridSize = Math.min(Math.max(gridSize, minGridSize), maxGridSize);
-
-
-
 
 const {
   handleDropdownChange, 

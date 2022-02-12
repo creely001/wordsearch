@@ -4,10 +4,10 @@ import {useRef, useState} from 'react';
 
 export default function useWordSearchWords(wordList, gridSize, handleRegenerateGrid){
 
-    // const maxWords = Math.floor(((gridSize/100) * 50) + gridSize/4);
-    const maxWords = gridSize - 3
+
+    const maxWords = (Math.floor((gridSize+1 * (Math.log(3)*gridSize)) / 2 + (1*gridSize/10) - 3 ))
     const numCells = gridSize * gridSize;
-    const maxChars = Math.floor((numCells/100)*70) //% of total cells in grid
+    const maxChars = Math.floor((numCells/100)*50) //% of total cells in grid
     const maxWordLength = gridSize;
     
 
@@ -50,17 +50,6 @@ export default function useWordSearchWords(wordList, gridSize, handleRegenerateG
         function regenerateWords(){
             setWords(getWords())
         }
-
-        const chars = words.join("").length;
-
-        if(chars > maxChars) {
-            console.log(`Too many characters in combined words. Maximum is ${maxChars}, current is ${chars}.`)
-            return;
-          }
-          if(words.length > maxWords){
-            console.log(`Too many words to add. Maximum is ${maxWords}, current is ${words.length}.`);
-            return;
-          }
 
     return {handleDropdownChange, chosenList, words, regenerateWords}
 }
