@@ -16,14 +16,7 @@ export default function useWordSearchGrid(words, gridSize, debugMode){
     const usedWords = useRef([])
     const [loaded, setLoaded] = useState(false)
 
-    function getNewWords(){
-
-          console.log(wordsToInsert)
-
-    }
-
     function regenerateGrid(){
-        getNewWords()
         setLoaded(false)
         wordLocations.current = []
         usedWords.current = []
@@ -508,7 +501,6 @@ export default function useWordSearchGrid(words, gridSize, debugMode){
     }
 
     function getRandomLetter(){
-        console.log(debugMode)
         return debugMode ? " " : alphabet[Math.floor(Math.random()*alphabet.length)];
     }
 
@@ -541,5 +533,5 @@ export default function useWordSearchGrid(words, gridSize, debugMode){
 
 
 
-    return {grid, wordLocations, regenerateGrid, getNewWords, loaded, setLoaded}
+    return {grid, wordLocations, regenerateGrid, loaded, setLoaded}
 }

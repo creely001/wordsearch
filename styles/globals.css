@@ -48,6 +48,7 @@ margin-bottom: 1em;
   gap: 1em;
   flex-wrap:wrap;
   margin-top: 2em;
+  max-width: 800px;
 }
 
 h4{
