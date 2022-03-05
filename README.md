@@ -1,7 +1,7 @@
 
 ## Wordsearch
 
-### When building todo lists just won't do...
+### Reusable wordsearch component
 
 <br/>
 
