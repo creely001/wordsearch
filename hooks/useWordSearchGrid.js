@@ -52,9 +52,13 @@ export default function useWordSearchGrid(words, gridSize, debugMode){
               index
             }
           })
-        initWord();
+          
 
-    }, [grid]);
+          initWord();
+      
+    });
+    
+    
 
     function initWord(){
 
@@ -64,7 +68,6 @@ export default function useWordSearchGrid(words, gridSize, debugMode){
     
         if(word === null) {
           //After all words have been added, fill remaining cells with random letters
-          console.log("All words added.")
     
           return addRandomLetters() === null ? addRandomLetters() : null
     
@@ -85,7 +88,6 @@ export default function useWordSearchGrid(words, gridSize, debugMode){
           
           // Return the coordinates for the word to be inserted, as well as a direction.
           if(findWordInsertLocation(wordToInsert) === null) {
-            console.log("Generating grid...")
             regenerateGrid();
             return
           }
@@ -222,7 +224,6 @@ export default function useWordSearchGrid(words, gridSize, debugMode){
               }
               return false
         
-            break;
           case "DIAGONAL_UP_POS":
               //Handle word placement if diagonal up right
         
@@ -264,6 +265,19 @@ export default function useWordSearchGrid(words, gridSize, debugMode){
                   }
                 }
                 return false
+
+                default:
+                  //Handle word placement if diagonal down right 
+                  // Add length of word to both the row index and the cell index, sum must be <= both.
+          
+                  sum = word.length + cell
+                  if(sum <= rowLength){
+                    sum = word.length + row;
+                    if(sum <= rowCount){
+                      return true
+                    }
+                  }
+                  return false
         }
         
     }
@@ -403,6 +417,19 @@ export default function useWordSearchGrid(words, gridSize, debugMode){
               }
         
             break;
+            default:
+              //Handle word placement if diagonal down right 
+              //Place letters diagonally right
+              //Slice each row and replace one cell for every letter. Increment both cell and row.
+              for(let i = 0; i < wordToInsert.length; i++){
+                setGrid((prev)=>{
+             
+                  return ([...prev.slice(0,row+i), [...prev[row+i].slice(0,cell+i), wordToInsert[i], ...prev[row+i].slice(cell+1+i)], ...prev.slice(row+1+i)])
+        
+              })
+              }
+        
+            break;
         }
         
     }
@@ -488,6 +515,16 @@ export default function useWordSearchGrid(words, gridSize, debugMode){
                 })
               } 
               break;
+              default:
+                //Handle word placement if diagonal down right 
+                for(let i = 0; i < word.length; i++){
+                  cells.push({
+                    letter: word[i],
+                    row: row+i,
+                    cell: cell+i
+                  })
+                } 
+                break;
         }
         return cells
     }

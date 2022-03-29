@@ -1,9 +1,9 @@
-import styles from '../styles/Home.module.css'
 import useWordSearch from '../hooks/useWordSearch';
 import {useEffect, useState} from 'react'
 import Grid from './Wordsearch/Grid'
 import WordsearchHeader from './Wordsearch/WordsearchHeader';
 import WordsearchFooter from './Wordsearch/WordsearchFooter';
+import styles from './wordsearch.module.css'
 
 const fruits = ["APPLE", "BANANA", "MANGO", "KIWI", "ORANGE", "PEAR", "STRAWBERRY", "MELON", "GRAPE", "PINEAPPLE", "APRICOT", "ELDERBERRY", "DAMSON", "PLUM", "SULTANA", "BLUEBERRY", "GRAPEFRUIT", "KUMQUAT", "LIME", "LEMON", "RASPBERRY", "BLACKBERRY", "RHUBARB", "WATERMELON", "TOMATO"];
 const vegetables = ["PEA", "CUCUMBER", "BROCCOLI", "AUBERGINE", "CARROT", "POTATO", "CHILI", "SPINACH", "LETTUCE", "MUSHROOM", "CABBAGE", "LEEK", "SWEETCORN", "PUMPKIN", "PARSNIP", "TURNIP", "RADISH", "CELERY", "ASPARAGUS", "PEPPER", "BEETROOT"];
@@ -61,7 +61,7 @@ export default function Wordsearch(){
 
     useEffect(() => {
       setWordsRemaining(wordLocations)
-    }, [grid]);
+    }, [grid, setWordsRemaining, wordLocations]);
 
 
 
@@ -69,7 +69,7 @@ export default function Wordsearch(){
 if(!loaded){
         return <div></div>
 }
-    return <div>
+    return <div className={styles.mainContainer}>
 
     <WordsearchHeader chosenList={chosenList} wordListOptions={wordList} handleWordListSelection={handleDropdownChange} incrementGridSize={incrementGridSize} decrementGridSize={decrementGridSize} gridSizeDisplay={gridSize}/>
 

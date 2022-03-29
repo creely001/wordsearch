@@ -1,5 +1,4 @@
-import {useState, useRef, useEffect } from 'react'
-
+import styles from '../wordsearch.module.css'
 function Cell({letter, row, cell, onSelect, isSelected, isChecked, linethroughs}){
 
 
@@ -16,9 +15,8 @@ function Cell({letter, row, cell, onSelect, isSelected, isChecked, linethroughs}
         return style
 
     }
-        
 
-    return <td className={"cell"} style={{background: getStyle()}} row={row} cell={cell} onClick={(e)=>{
+    return <td className={styles.td} style={{background: getStyle()}} row={row} cell={cell} onClick={(e)=>{
         onSelect(e, row, cell);
     }}>
         {letter}

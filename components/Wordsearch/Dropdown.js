@@ -1,5 +1,5 @@
 import Option from "./Option";
-import styles from './wordsearch.module.css'
+import styles from '../wordsearch.module.css'
 function Dropdown({onSelectChange, selected, options}){
 
 function handleSelect(e){
