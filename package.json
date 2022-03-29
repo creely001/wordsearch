@@ -1,12 +1,25 @@
 {
-  "name": "react-wordsearch",
-  "version": 1.0.0,
+  "name": "react--wordsearch",
+  "version": "1.0.1",
+  "description": "Simple React Wordsearch",
+  "main": "next.config.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Laurence279/wordsearch.git"
+  },
+  "keywords": [],
+  "author": "Laurence Nunn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Laurence279/wordsearch/issues"
+  },
+  "homepage": "https://github.com/Laurence279/wordsearch#readme",
   "dependencies": {
     "next": "12.0.10",
     "react": "17.0.2",
@@ -15,5 +28,7 @@
   "devDependencies": {
     "eslint": "8.8.0",
     "eslint-config-next": "12.0.10"
-  }
+  },
+  "files": ["src"]
+  
 }

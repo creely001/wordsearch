@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import Wordsearch from '../components/Wordsearch'
+import Wordsearch from '../src/components/Wordsearch'
 
 export default function Home() {
 
