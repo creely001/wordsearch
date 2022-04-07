@@ -1,5 +1,5 @@
 
-## react-wordsearch
+## [react-wordsearch](https://www.npmjs.com/package/react-wordsearch)
 
 > A simple wordsearch for React
 
