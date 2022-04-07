@@ -31,7 +31,7 @@ export default App;
 
 <br/>
 
-##[Preview](https://searchingofthewords.netlify.app/)
+<h1>[Preview](https://searchingofthewords.netlify.app/)</h1>
 
 ## License
 
