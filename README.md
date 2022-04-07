@@ -18,7 +18,7 @@ import { Wordsearch } from 'react-wordsearch'
 import 'react-wordsearch/dist/index.css'
 
 function App() {
-    
+
   return (
     <div className="App">
       <Wordsearch/>
