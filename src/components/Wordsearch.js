@@ -5,11 +5,11 @@ import WordsearchHeader from './Wordsearch/WordsearchHeader';
 import WordsearchFooter from './Wordsearch/WordsearchFooter';
 import styles from './wordsearch.module.css'
 
-const fruits = ["APPLE", "BANANA", "MANGO", "KIWI", "ORANGE", "PEAR", "STRAWBERRY", "MELON", "GRAPE", "PINEAPPLE", "APRICOT", "ELDERBERRY", "DAMSON", "PLUM", "SULTANA", "BLUEBERRY", "GRAPEFRUIT", "KUMQUAT", "LIME", "LEMON", "RASPBERRY", "BLACKBERRY", "RHUBARB", "WATERMELON", "TOMATO"];
+const cyber = ["APPLE", "BANANA", "MANGO", "KIWI", "ORANGE", "PEAR", "STRAWBERRY", "MELON", "GRAPE", "PINEAPPLE", "APRICOT", "ELDERBERRY", "DAMSON", "PLUM", "SULTANA", "BLUEBERRY", "GRAPEFRUIT", "KUMQUAT", "LIME", "LEMON", "RASPBERRY", "BLACKBERRY", "RHUBARB", "WATERMELON", "TOMATO"];
 
 
 const wordList = [
-  {id:1, name: "Fruits", words: fruits},
+  {id:1, name: "Fruits", words: cyber},
 ]
 
 export default function Wordsearch(){
