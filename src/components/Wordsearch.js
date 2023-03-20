@@ -5,7 +5,7 @@ import WordsearchHeader from './Wordsearch/WordsearchHeader';
 import WordsearchFooter from './Wordsearch/WordsearchFooter';
 import styles from './wordsearch.module.css'
 
-const cyber = ["PHISHING", "DDOS", "VIRUS", "PORTSCANNING"];
+const cyber = ["PHISHING", "DDOS", "VIRUS", "PORTSCANNING", "SCAM"];
 
 
 const wordList = [
